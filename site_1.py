@@ -84,7 +84,7 @@ def is_valid_input(ne_input):
     pattern = r'^\d{1,3}-\d{1,2}-\d{1,3}$'
     return re.match(pattern, ne_input) is not None
 
-@app.route('/Accueil')
+@app.route('/')
 def home():
     return render_template('Accueil.html')
 
