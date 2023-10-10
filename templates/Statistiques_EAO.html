@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+    <title>Stats EAO/XEJ</title> 
+</head>
+<body>
+    <div id="header">
+        <a href="/Accueil"  class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">   
+        </a>
+        <h1>Statistiques EAO/XEJ</h1>
+    </div>
+    <main>
+        <div class="box">
+            <form action="/StatsEAO" method="POST" id="myForm">
+                <textarea name="user_input" id="myTextarea" class="customTextarea" placeholder="collez vos diags ici" required="" ></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>            
+        </div>
+        {% if data is defined %}
+            {% set all_values = [] %}
+            
+            {% if current_model == 'EAO' %}
+                <h2>Résultats</h2>
+                <table id="mytable">
+                    <tr>
+                        <th></th>
+                        <th>RN1</th>
+                        <th>RN2</th>
+                        <th>RN3</th>
+                        <th>RN4</th>
+                        <th>RN5</th>
+                        <th>RN6</th>
+                        <th>RN7</th>
+                        <th>RN8</th>
+                        <th>RN11</th>
+                        <th>RN12</th>
+                        <th>RN13</th>
+                        <th>RN14</th>
+                        <th>RN15</th>
+                        <th>RN16</th>
+                        <th>RN17</th>
+                        <th>RN18</th>
+                    </tr>
+                    <tr>
+                        <th>ALV3</th>
+                            {% for i in range(1, 17) %}
+                                {% set val = data['ALV3_RN' + i|string]|default(0) %}
+                                    <td>
+                                        <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                                    </td>
+                            {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV4</th>
+                        {% for i in range(1, 17) %}
+                            {% set val = data['ALV4_RN' + i|string]|default(0) %}
+                                <td>
+                                    <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                                </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV5</th>
+                        {% for i in range(1, 17) %}
+                            {% set val = data['ALV5_RN' + i|string]|default(0) %}
+                                <td>
+                                    <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                                </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV6</th>
+                        {% for i in range(1, 17) %}
+                            {% set val = data['ALV6_RN' + i|string]|default(0) %}
+                                <td>
+                                    <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                                </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+
+                <div class=legende>
+                    <p>Pour changer la couleur d'une case, vous pouvez simplement cliquer dessus.</p>
+                    <p>Si vous souhaitez changer la couleur de plusieurs cases, vous pouvez également appuyer sur l'une des touches 'R', 'O', 'J', 'V' ou 'D', puis effectuer un cliqué-glissé
+                    </p>
+                    <div/>
+            
+            {% elif current_model == 'XEJ' %}
+                <h2>Résultats:</h2>
+                {%set rn_values = ['RN6','RN13','RN20','RN27','RN35','RN42','RN49','RN56','RN64','RN71','RN78','RN85','RN93','RN100','RN107','RN114']%}
+                <table id="mytable">
+                    <tr>
+                        <th></th>
+                        {% for rn in rn_values %}
+                            <th>{{ rn }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV2</th>
+                        {% for rn in rn_values %}
+                            {% set val = data['ALV2_' + rn]|default(0) %}
+                            <td>
+                                <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV3</th>
+                        {% for rn in rn_values %}
+                            {% set val = data['ALV3_' + rn]|default(0) %}
+                            <td>
+                                <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                       
+                        <th>ALV7</th>
+                        {% for rn in rn_values %}
+                            {% set val = data['ALV7_' + rn]|default(0) %}
+                            <td>
+                                <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default">{{ val }}</div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>ALV8</th>
+                        {% for rn in rn_values %}
+                            {% set val = data['ALV8_' + rn]|default(0) %}
+                            <td>
+                                <div class="zoomable {% if val >= 50 and val < 100 %}yellow{% elif val >= 100 and val < 200 %}orange{% elif val >= 200 %}red{% endif %}" data-color="default" data-color-changeable>{{ val }}</div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            {% endif %}
+            
+            <button class="btn" id="copyImageBtn">Copier Image</button>
+            <canvas id="tableCanvas" style="display: none;"></canvas>
+
+
+
+            <div class=legende>
+                <p>Pour changer la couleur d'une case, vous pouvez simplement cliquer dessus.</p>
+                <p>Si vous souhaitez changer la couleur en survolant plusieurs cases, vous pouvez également appuyer sur l'une des touches 'R', 'O', 'J', 'V' ou 'D', puis effectuer un cliqué-glissé</p>
+                <div/>
+
+        {% endif %}
+
+        
+        
+        
+        
+    </main>
+   
+
+</body>
+<script>
+        // Obtenez toutes les cellules du tableau
+    const cells = document.querySelectorAll('table td div.zoomable');
+
+    // Créez un tableau pour stocker les valeurs
+    const cellValues = [];
+    cells.forEach(cell => {
+        const value = parseInt(cell.textContent, 10); // Convertir le contenu en nombre
+        if (!isNaN(value)) {
+            cellValues.push(value);
+        }
+    });
+
+    // Vérifiez si aucune des valeurs n'est supérieure à 50
+    const isAllValuesBelow50 = cellValues.every(value => value <= 50);
+
+    if (isAllValuesBelow50) {
+        // Triez le tableau par valeur décroissante
+        cellValues.sort((a, b) => b - a);
+
+        // Colorisez les 5 plus grandes valeurs en jaune
+        for (let i = 0; i < Math.min(5, cellValues.length); i++) {
+            const value = cellValues[i];
+            const correspondingCell = [...cells].find(cell => parseInt(cell.textContent, 10) === value);
+            if (correspondingCell) {
+                correspondingCell.classList.add('yellow');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const cells = document.querySelectorAll('.zoomable');
+    
+        cells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                const currentColor = this.getAttribute('data-color');
+                switch (currentColor) {
+                    case 'default':
+                        this.style.backgroundColor = 'red';
+                        this.setAttribute('data-color', 'red');
+                        break;
+                    case 'red':
+                        this.style.backgroundColor = 'orange';
+                        this.setAttribute('data-color', 'orange');
+                        break;
+                    case 'orange':
+                        this.style.backgroundColor = 'yellow';
+                        this.setAttribute('data-color', 'yellow');
+                        break;
+                    case 'yellow':
+                        this.style.backgroundColor = 'green';
+                        this.setAttribute('data-color', 'green');
+                        break;
+                    case 'green':
+                        this.style.backgroundColor = '#e9eff6'; // Couleur par défaut (blanc)
+                        this.setAttribute('data-color', 'default');
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+    });
+
+    let isMouseDown = false;
+    let currentColor = "#e9eff6";
+    
+    document.addEventListener('mousedown', () => {
+        isMouseDown = true;
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isMouseDown = false;
+    });
+    
+    document.querySelectorAll('.zoomable').forEach(cell => {
+        cell.addEventListener('mouseover', () => {
+            if (isMouseDown) {
+                cell.style.backgroundColor = currentColor;
+            }
+        });
+    });
+    
+    document.addEventListener('keydown', event => {
+        switch (event.key) {
+            case 'r':
+                currentColor = 'red';
+                break;
+            case 'o':
+                currentColor = 'orange';
+                break;
+            case 'j':
+                currentColor = 'yellow';
+                break;
+            case 'v':
+                currentColor = 'green';
+                break;
+            case 'd':
+                currentColor = '#e9eff6';
+                break;
+            default:
+                break;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // ...
+    
+        // Gestionnaire d'événements pour le bouton "Copier Image"
+        const copyImageBtn = document.getElementById('copyImageBtn');
+        copyImageBtn.addEventListener('click', function () {
+            // Utilisez html2canvas pour capturer le contenu du tableau sous forme d'image
+            const table = document.getElementById('mytable');
+    
+            html2canvas(table).then(function (canvas) {
+                // Créez une balise img et définissez son src pour qu'il pointe vers l'image générée
+                const img = new Image();
+                img.src = canvas.toDataURL('image/png');
+    
+                // Sélectionnez l'image et copiez-la dans le presse-papiers
+                img.select();
+                document.execCommand('copy');
+    
+                alert('Image copiée dans le presse-papiers !');
+            });
+        });
+    });
+ 
+</script>
+</html>

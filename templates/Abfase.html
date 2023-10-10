@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang=fr>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            /* Styles CSS pour le message de copie */
+            .custom-copy-message {
+                display: none;
+                position: fixed;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                text-align: center;
+                z-index: 999;
+            }
+            
+            /* Largeur des colonnes */
+            th:first-child,
+            td:first-child {
+                width: 12%; /* Largeur de la colonne "NE" */
+            }
+            
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 9%; /* Largeur de la colonne "CN" */
+            }
+            
+            th:nth-child(5),
+            td:nth-child(5) {
+                width: 15%; /* Largeur de la colonne "Actions" */
+            }
+            
+            /* Laisser plus d'espace aux colonnes "Rainure" et "URTL" */
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 44%; /* Largeur des colonnes "Rainure" et "URTL" */
+            }
+
+            th:nth-child(3),
+            td:nth-child(3){
+                width: 20%; /* Largeur des colonnes "Rainure" et "URTL" */
+            }
+        
+        </style>
+        
+        <title>Abfase</title> 
+    </head>
+    <body class="special-page">
+        <div id="header">
+            <a href="/Accueil"  class="Accueil-lien">
+                <img src="static/images/maison.png" alt="Accueil">   
+            </a>
+            <h1>Abfase</h1>
+        </div>
+        <main>
+            <div class="box">
+                <form action="/Abfase" method="POST">
+                    <textarea name="ne" id="myTextarea" class="customTextarea" placeholder="Entrez votre ABFASE:AFUR=...,etat=FAUT+BLOS ici..." required=""></textarea><br>
+                    <input type="submit" class="btn btn-primary" value="Exécuter">
+                </form>            
+            </div>
+             <!-- Message de copie personnalisé -->
+            <div class="custom-copy-message" id="custom-copy-message">
+                Contenu copié dans le presse-papiers :
+                <div id="copied-content"></div>
+            </div>
+
+            <table class="no-padding-table">
+                <thead>
+                  <tr>
+                    <th>NE</th>
+                    <th>CN</th>
+                    <th>Rainure CN1G/CNHD/CNEHD</th>
+                    <th>URTL</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in result %}
+                  <tr class="encadre-line">
+                    <td class="no-padding-table">{{ item['NE'] }}</td>
+                    <td class="no-padding-table">{{ item['CN'] }}</td>
+                    <td class="no-padding-table">{{ item['Rainures'] }}</td>
+                    <td class="no-padding-table"><span class="URTL">{{ item['URTL'] }}</span></td>
+                    <td class="no-padding-table">
+                        <button class="btn btn-small" onclick="copierContenu(this)">Copier URTL</button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+              
+  
+        </main>
+        <script>
+
+            // Accéder à toutes les lignes du tableau
+            const rows = document.querySelectorAll('table tbody tr');
+
+            let previousCC = null; // Stocke la valeur CC (12) de la ligne précédente
+            let previousCCC = null; // Stocke la valeur CCC (120) de la ligne précédente
+
+            rows.forEach((row, index) => {
+                // Ajouter la classe "encadre-ligne" à toutes les lignes par défaut
+                row.classList.add('encadre-ligne');
+
+                if (index === 0) {
+                    // Ignore la première ligne (en-têtes de colonnes)
+                    return;
+                }
+
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 1) {
+                    const currentNE = cells[0].textContent.trim(); // Valeur de la colonne NE
+
+                    // Utiliser une expression régulière pour extraire les valeurs CC et CCC
+                    const match = currentNE.match(/NE\s*=\s*(\d+)-(\d+)-(\d+)/);
+                    if (match) {
+                        const currentCC = parseInt(match[2]); // Valeur extraite de CC
+                        const currentCCC = parseInt(match[3]); // Valeur extraite de CCC
+
+                        // Vérifier si CC (12) de la ligne actuelle est identique à CC de la ligne précédente
+                        // ET si CCC (120) de la ligne actuelle est dans la même plage que CCC de la ligne précédente
+                        if (
+                            previousCC !== null && previousCC === currentCC &&
+                            previousCCC !== null && isInRange(previousCCC, currentCCC)
+                        ) {
+                            // Retirer la classe "encadre-ligne" et ajouter les classes de masquage appropriées
+                            row.classList.remove('encadre-ligne');
+                            row.classList.add('masquer-bordure-superieure');
+                            if (index > 1) {
+                                // Retirer la classe "encadre-ligne" de la ligne précédente
+                                const previousRow = rows[index - 1];
+                                previousRow.classList.remove('encadre-ligne');
+                                // Ajouter la classe de masquage appropriée à la ligne précédente
+                                previousRow.classList.add('masquer-bordure-inferieure');
+                            }
+                        }
+
+                        // Mettre à jour les valeurs précédentes
+                        previousCC = currentCC;
+                        previousCCC = currentCCC;
+                    }
+                }
+            });
+            
+            // Fonction pour vérifier si CCC est dans la même plage que CCC précédent
+            function isInRange(previousCCC, currentCCC) {
+                const ranges = [
+                    { min: 0, max: 15 },
+                    { min: 16, max: 31 },
+                    { min: 32, max: 47 },
+                    { min: 48, max: 63 },
+                    { min: 64, max: 79 },
+                    { min: 80, max: 95 },
+                    { min: 96, max: 111 },
+                    { min: 112, max: 127 }
+                ];
+            
+                for (const range of ranges) {
+                    if (previousCCC >= range.min && previousCCC <= range.max &&
+                        currentCCC >= range.min && currentCCC <= range.max) {
+                        return true;
+                    }
+                }
+            
+                return false;
+            }
+            
+            
+
+            // Accéder à toutes les lignes du tableau
+
+            rows.forEach((row) => {
+                const urtlCell = row.querySelector('.URTL'); // Sélectionner la cellule URTL de la ligne
+
+                if (urtlCell && urtlCell.textContent.trim() === '') {
+                    // Si la cellule URTL existe et est vide, masquer le bouton "Copier URTL"
+                    const copyButton = row.querySelector('button');
+                    if (copyButton) {
+                        copyButton.style.display = 'none';
+                    }
+                }
+            });
+
+
+
+            
+
+
+            function copierContenu(button) {
+                const row = button.closest('tr'); // Trouver la ligne parente (tr) du bouton cliqué
+                const urtlElement = row.querySelector('.URTL'); // Rechercher l'élément avec la classe URTL dans la ligne
+                if (urtlElement) {
+                    const contenuURTL = urtlElement.textContent;
+                    const tempTextarea = document.createElement('textarea');
+                    tempTextarea.value = contenuURTL;
+                    document.body.appendChild(tempTextarea);
+                    tempTextarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextarea);
+            
+                    // Afficher "Copié" sur le bouton pendant 4 secondes
+                    button.textContent = 'URTL Copié';
+                    setTimeout(() => {
+                        button.textContent = 'Copier URTL';
+                    }, 4000);
+            
+                    // Afficher la boîte de dialogue personnalisée
+                    const copiedContent = document.getElementById('copied-content');
+                    copiedContent.textContent = contenuURTL;
+                    const customAlert = document.getElementById('custom-alert');
+                    customAlert.style.display = 'flex';
+                } else {
+                    alert('Élément avec la classe URTL non trouvé dans la ligne.');
+                }
+            }
+        </script>
+    </body>
+
+</html>

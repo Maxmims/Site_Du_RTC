@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type et Catégorie</title> 
+</head>
+<body>
+    <div id="header">
+            <a href="/Accueil"  class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">   
+        </a>
+        <h1>Type et catégories des abonnés</h1>
+    </div>
+
+    <main>
+        <div class="box">
+            <form action="/type" method="POST">
+                <textarea name="inputText_ty_cat" id="myTextarea" class="customTextarea" placeholder="Collez votre TYP d'abonné ici..." required=""></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>
+        </div>
+        {% if no_matches_found %}
+            <p>Aucune correspondance trouvée.</p>
+        {% else %}
+            {% if type_matches %}
+            <h2>Types trouvés :</h2>
+            <ul>
+                {% for match in type_matches %}
+                <li>{{ match }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if categorie_matches %}
+            <h2>Categories trouvées :</h2>
+            <ul>
+                {% for match in categorie_matches %}
+                <li>{{ match }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if marque_matches %}
+            <h2>Marques trouvées :</h2>
+            <ul>
+                {% for match in marque_matches %}
+                <li>{{ match }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endif %}
+    </main>
+
+</body>
+</html>

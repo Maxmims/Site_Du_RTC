@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title> 
+</head>
+<body>
+    <div id="header">
+            <a href="/Accueil"  class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">
+        </a>
+        <h1>Accueil</h1>
+    </div>
+    <main class='home'>
+        <a href="{{ url_for('Fetut')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Fetut</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+        <a href="{{ url_for('Felri')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Felri</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+        <a href="{{ url_for('NeOfis')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Ne Ofis</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+        <a href="{{ url_for('Type')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Type Abonné</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+        <a href="{{ url_for('StatsEAO')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Stats EAO/XEJ</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+        <a href="{{ url_for('Abfase')}}">
+            <div class="onglet">
+                <div class="headeronglet">
+                    <h3>Abfase</h3>
+                </div>
+                <img src="/static/images/archive.png" alt="Logo_Archive" class="onglet-image">
+            </div>
+        </a>
+
+    </main>
+
+
+</body>
+</html>

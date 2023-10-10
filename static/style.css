@@ -1,0 +1,507 @@
+
+@font-face {
+    font-family: 'MaPolice-Regular';
+    src: url('/static/Nunito/static_nunito/Nunito-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'MaPolice-BoldRegular';
+    src: url('/static/Nunito/static_nunito/Nunito-ExtraBold.ttf') format('truetype');
+}
+
+
+#header {
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    font-family: 'MaPolice-regular', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.Accueil-lien img {
+    width: 40px; 
+    height: 40px; 
+    padding-left: 30px;
+    border: none; /* Supprime la bordure */
+}
+
+
+
+a {
+    color: black; /* Modifier la couleur du texte du lien */
+    text-decoration: none; /* Supprimer le soulignement du lien */
+    margin: 8px;
+}
+
+h1{
+    margin: 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #6e6e73;
+}
+
+h2{
+    margin: 0;
+    font-size: 18px;
+    color: #6e6e73;
+    font-family: 'MaPolice-BoldRegular';
+
+}
+
+/* Style pour toutes les balises <li> */
+ul li {
+    font-size: 16px; /* Taille de la police */
+    margin: 5px 0; /* Marge en haut et en bas */
+    padding: 5px; /* Espacement intérieur */
+    border-bottom: 1px solid #ccc; /* Bordure en bas de chaque élément */
+    list-style: none; /* Supprime les puces */
+    transition: background-color 0.3s ease-in-out; /* Transition de couleur de fond */
+    font-family: 'MaPolice-regular', sans-serif;
+
+}
+
+/* Style pour les balises <li> au survol */
+ul li:hover {
+    background-color: #f0f0f0; /* Couleur de fond au survol */
+    cursor: pointer; /* Curseur de la souris en main */
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    background-attachment: fixed;
+    background-color: rgb(245, 245, 247);
+    background-size: cover;
+    background-position: center;
+}
+.special-page {
+    overflow: auto; /* ou overflow: scroll; */
+}
+
+main {
+    min-height: 500px;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 20px;
+    border: 2px solid rgb(228, 222, 211);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.301);
+    box-shadow: 0 0 20px 5px rgb(168, 167, 164);
+    padding: 15px;
+    transition: transform 0.3s ease-in-out;
+
+}
+.home {
+    display: flex;
+    justify-content: center;
+}
+
+
+main:hover {
+    transform: scale(1.03);
+}
+.box{
+ border:none;
+ display: flex ;
+ justify-content: center;
+ padding: 5px ;
+
+}
+.legende {
+    padding: 30px;
+    font-family: 'MaPolice-regular', sans-serif;
+}
+
+.onglet {
+    width: 100px;
+    height: 150px;
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+    border: 2px solid rgb(196, 196, 196); 
+    border-radius: 10px ;
+    transition: transform 0.3s ease-in-out; 
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+.onglet-image {
+    max-width: 100%;
+    max-height: 100%;
+    margin-top: 8px;
+    transform: scale(1.5);
+      
+}
+
+.onglet:hover{
+    transform: scale(1.1);
+}
+
+.headeronglet {
+    border: 2px solid rgb(196, 196, 196);
+    background-color: rgb(168, 167, 164);
+    max-width: 100%;
+    height: 35%;
+    border-radius: 10px;
+    margin: 4px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'MaPolice-regular', sans-serif;
+}
+
+textarea {
+    width: 400px;
+    height: 80px;
+    padding: 0.375rem 0.75rem;
+    border: none;
+    resize: none;
+    border-radius: 15px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(24, 23, 23);
+    font-size: 16px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.15s ease-in-out;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.table-container {
+    
+    margin: 0 auto; /* Centre le tableau horizontalement */
+    overflow-y: auto;
+    max-height: 70vh;
+    font-size: small;
+}
+
+table {
+    font-family: 'MaPolice-regular',sans-serif;
+    width: 100%; /* Occupe toute la largeur de son conteneur */
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid black;
+    padding: 2px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+input[type="text"]:focus, textarea:focus {
+    box-shadow: 0 0 20px 4px rgb(93, 94, 99) ;
+}
+
+.rectangle-container {
+    width: 100%;
+    display: flex;
+    
+    
+}
+.rectangle {  
+    position: relative; 
+    display: flex;
+    flex: 1 0 auto;
+    height: 120px;
+    width: 42px;
+    justify-content: center;
+    align-items: center;
+    margin: 1px;
+    border-radius: 10px;
+    box-shadow: inset 5px 1px 7px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);  
+    
+}
+
+.rond-rouge {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    
+}
+
+.rond-rouge2 {
+    position: relative; 
+    display: flex;
+    margin-left: 22px;
+    margin-top: 100px;  
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    
+}
+
+.btn {
+    color: rgb(0, 0, 0);
+    background-color: rgb(245, 245, 247);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 9px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    margin: 5px;
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.btn-small {
+    font-size: 0,8rem; /* Modifiez la taille de police selon vos besoins */
+    padding: 2px 3px;
+}
+
+
+.rectangle span {
+    text-transform: uppercase;
+    font-family: 'MaPolice-BoldRegular';
+    font-weight: bold;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    line-height: 1;
+
+}
+span.spanleg {
+    writing-mode: initial;
+    text-transform: none;
+    font-size: small;
+    font-family: 'MaPolice-BoldRegular';
+    margin: 8px;
+    text-align: center;
+}
+span.spanleg2 {
+    writing-mode: initial;
+    text-transform: none;
+    position: absolute;
+    transform: translateX(-55%);
+    font-size: small;
+    font-family: 'MaPolice-regular', sans-serif;
+    margin: 8px;
+    text-align: center;
+}
+.rectangle[data-value]::before {
+    content: attr(data-value);
+    font-size: 16px;
+    color: rgb(0, 0, 0);
+    position: absolute;
+    font-family: 'MaPolice-BoldRegular';
+    z-index: 1;
+    width: 120px;    
+    background-color: rgba(240, 84, 11, 0.95);
+    padding: 5px;
+    border-radius: 5px;
+    visibility: hidden; /* Masque le contenu par défaut */
+}
+.rectangle[data-value=""]:before {
+    visibility: hidden;
+}
+  /* Affiche le contenu uniquement lorsque data-value a une valeur non vide */
+.rectangle[data-value]:hover::before {
+    visibility: visible;
+  }
+
+.rectangle.clignotant {
+    animation: clignotement 1s infinite;
+}
+  
+@keyframes clignotement {
+    0% {
+      background-color: rgba(43, 143, 43, 0.8);
+    }
+    50% {
+      background-color:  rgb(179, 176, 176, 0.3);
+    }
+    100% {
+      background-color: rgba(43, 143, 43, 0.8);
+    }
+}
+
+.vertrouge {
+    background-color: red;
+    animation: blink 1s infinite ;
+}
+
+@keyframes blink {
+    0% {
+      background-color: green;
+    }
+    50% {
+      background-color: red;
+    }
+    100% {
+      background-color: green;
+    }
+}   
+.vert {
+    background-color: rgb(43, 143, 43);
+}
+
+.rouge {
+    background-color: rgb(255, 0, 0);
+}
+
+.gris {
+    background-color: rgb(179, 176, 176);
+}
+
+.blanc {
+    background-color: rgb(255, 255, 255);
+}
+
+.leg {
+    flex: none;
+    height: 200px;
+    width: 80px
+}
+.leg1 {
+    flex: none;
+    height: 200px;
+    width: 140px;
+}
+
+.valeurs-ut {
+    position: absolute;
+    bottom: -70px; /* Placez les valeurs au bas du rectangle */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #333;
+    padding: 2px;
+    line-height: 1;
+    /* Limitez la largeur du texte pour qu'il ne dépasse pas la largeur du rectangle */
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout: fixed; /* Définit une largeur de colonne fixe pour tout le tableau */
+    width: 100%; /* Répartit la largeur disponible également entre les colonnes */
+
+}
+
+table, th, td {
+    
+    padding: 5px;
+    box-shadow: 0px 0px 7px 3px #bfbfbf;
+    user-select: none;
+}
+
+th {
+    background-color: lightgray;
+    color: #333;
+    font-family: 'MaPolice-BoldRegular';
+    width: auto;
+    
+}
+
+th.RN6, th.RN13, th.RN20, th.RN27, th.RN35, th.RN42, th.RN49, th.RN56, th.RN64, th.RN71, th.RN78, th.RN85, th.RN93, th.RN100, th.RN107, th.RN114 {
+    width: 100px; /* Ajustez la valeur en pixels selon vos besoins */
+}
+
+td {
+    color: #413e3e;
+    border: 1px solid transparent;
+    background-color: #e9eff6;
+}
+
+/* Classe pour supprimer les marges internes des éléments de tableau */
+.no-padding-table {
+    border-collapse: collapse; /* Fusionner les bordures du tableau */
+    margin: 0; /* Supprimer la marge externe du tableau */
+    padding: 0; /* Supprimer le padding du tableau */
+}
+
+.no-padding-table th,
+.no-padding-table td {
+    padding: 0; /* Supprimer le padding des cellules de tableau */
+}
+
+
+
+
+.yellow {
+    background-color: yellow;
+    border-radius: 45px;
+}
+
+.orange {
+    background-color: orange;
+    border-radius: 45px;
+}
+
+.red {
+    background-color: red;
+    border-radius: 45px;
+}
+
+.zoomable {
+    transition: transform 0.2s; /* Ajoutez une transition pour un effet de zoom en douceur */
+    border-radius: 45px;
+    border: 1px solid transparent; /* Ajoutez une bordure transparente par défaut */
+    box-shadow: 3px 3px 20px 4px rgb(98 151 217 / 44%);
+    cursor: pointer; /* Changez le curseur pour montrer que l'élément est cliquable */
+    user-select: none; /*  empêcher la sélection de texte dans une case lorsque vous cliquez dessus*/
+}
+
+
+.zoomable:hover {
+    transform: scale(1.4); /* Zoom de 110% */
+    transition: transform 0.3s ease; /* Transition douce de l'échelle */
+}
+/* Classe pour encadrer les lignes du tableau */
+.encadre-ligne {
+    border: 3px solid #776969; /* Bordure de 2 pixels de large en noir */
+}
+/* Classe pour masquer la bordure inférieure */
+.masquer-bordure-inferieure {
+    border: 3px solid #776969;
+    border-bottom: none !important;
+    
+}
+
+/* Classe pour masquer la bordure supérieure et inférieure */
+.masquer-bordure-superieure-inferieure {
+    border-top: none !important;
+    border-bottom: none !important;
+    border:6px solid black;
+}
+
+/* Classe pour masquer la bordure supérieure */
+.masquer-bordure-superieure {
+    border: 3px solid #776969;
+    border-top: none !important;
+}
+
+
+
+/* Styles supplémentaires pour rendre les rectangles responsifs */
+@media screen and (max-width: 768px) {
+    .rectangle {
+      margin-right: 5px; /* Réduit l'espace entre les rectangles sur les écrans plus petits */
+    }
+}
+  
+@media screen and (max-width: 480px) {
+    .rectangle {
+      margin-right: 2px; /* Réduit davantage l'espace entre les rectangles sur les écrans encore plus petits */
+    }
+}

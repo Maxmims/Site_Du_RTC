@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang=fr>
+  <head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetut</title> 
+  </head>
+  <body>
+    <div id="header">
+      <a href="/Accueil"  class="Accueil-lien">
+        <img src="static/images/maison.png" alt="Accueil">
+      </a>
+      <h1>GraphiTool FETUT</h1>
+    </div>
+    <main class=''>
+      <div class="box">
+        <form action="/Fetut" method="POST">
+          <textarea name="donnees" id="myTextarea" class="customTextarea" placeholder="Collez votre FETUT ici..." required=""></textarea><br>
+          <input type="submit" class="btn btn-primary" value="Exécuter">
+        </form>
+      </div>
+      <div class="box">
+        <div class="rectangle-container">
+          {% for valeur in valeurs %}
+            {% set index = loop.index0 %}
+            {% set clef = resultat[index] %}
+            {% set rond_rouge = presence_de_diags[loop.index0] == 'Présence de diag' if presence_de_diags is iterable else False %}
+            {% set clignotant = chargement[loop.index0] == 'Téléchargement en cours' if chargement is iterable else False %}
+                
+            {% if clef is iterable and clef|string %}
+              {% set clef = clef|string|replace("[", "")|replace("]", "") %}
+            {% endif %}
+                
+            <div class="rectangle {% if valeur == 'Carte en BUG' %}vertrouge{% elif valeur == 'chargée' %}vert{% elif valeur == 'abs' %}gris{% elif valeur == 'NOK' %}rouge{% endif %} {% if clignotant %}clignotant{% endif %}" data-value="{{ clef }}">
+              <span>ut{{ index }} {% if rond_rouge %}<span class="rond-rouge"></span>{% endif %}</span>
+              <div class="valeurs-ut">
+                {{ valeurs_ut[index]|safe }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+    <div class="box legende">
+      <div class="rectangle blanc leg1">
+        <span class="spanleg">Légende Rainures</span>
+        <div class="valeurs-ut">
+          {{ valeurs_ut[17]|safe }}
+        </div>
+      </div>
+      <div class="rectangle vert leg">
+        <span class="spanleg">Carte présente et chargée</span>
+      </div>
+      <div class="rectangle rouge leg">
+        <span class="spanleg">Carte présente et non chargée</span>
+      </div>
+      <div class="rectangle gris leg">
+        <span class="spanleg">Carte non présente</span>
+      </div>
+      <div class="rectangle vert clignotant leg">
+        <span class="spanleg">Carte en chargement</span>
+      </div>
+      <div class="rectangle vertrouge leg">
+        <span class="spanleg">Carte en BUG</span>
+      </div>
+      <div class="rond-rouge2">
+        <span class="spanleg2">Présence de Diag</span>
+      </div>           
+    </div>
+    
+  </body>
+</html>

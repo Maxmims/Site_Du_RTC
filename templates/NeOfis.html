@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des NE des couples</title> 
+</head>
+<body>
+    <div id="header">
+        <a href="/Accueil"  class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">   
+        </a>
+        <h1>Les NE du couple</h1>
+    </div>
+    <main>
+        <div class="box">
+            <form action="/NeOfis" method="POST" id="myForm">
+                <textarea name="ne" id="myTextarea" class="customTextarea" placeholder="Entrez votre NE ici..." required="" onkeydown="return event.key != 'Enter';"></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>            
+        </div>
+        <script>
+            document.getElementById('myForm').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Empêcher le comportement par défaut (nouvelle ligne)
+                    document.getElementById('myForm').submit(); // Soumettre le formulaire
+                }
+            });
+        </script>
+        {% if ne_error %}
+            <p class="error-message">{{ ne_error }}</p>
+        {% endif %}
+
+        {% if numeroabo_error %}
+            <p class="error-message">{{ numeroabo_error }}</p>
+        {% endif %}
+
+        {% if resultat %}
+        <h2>Résultats pour le couple N&#176;{{couple}}:</h2>
+        <div class="table-container">
+            <table border="1">
+                {% for ligne in resultat %}
+                <tr>
+                    {% for cellule in ligne %}
+                    <td>
+                        <div class="zoomable" data-color="default">{{ cellule }}</div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </main>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cells = document.querySelectorAll('.zoomable');
+
+        cells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                const currentColor = this.getAttribute('data-color');
+                switch (currentColor) {
+                    case 'default':
+                        this.style.backgroundColor = 'red';
+                        this.setAttribute('data-color', 'red');
+                        break;
+                    case 'red':
+                        this.style.backgroundColor = 'green';
+                        this.setAttribute('data-color', 'green');
+                        break;
+                    case 'green':
+                        this.style.backgroundColor = '#e7eef6'; // Couleur par défaut (blanc)
+                        this.setAttribute('data-color', 'default');
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+    });
+</script>
+</html>

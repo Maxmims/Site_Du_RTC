@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felri</title> 
+</head>
+<body>
+    <div id="header">
+        <a href="/Accueil"  class="Accueil-lien">
+          <img src="static/images/maison.png" alt="Accueil">
+        </a>
+        <h1>Traduction Felri</h1>
+    </div>
+    <main>
+        <div class="box">
+            <form action="/Felri" method="POST">
+                <textarea name="donnees" id="myTextarea" class="customTextarea" placeholder="Collez votre FELRI ici..." required=""></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>
+        </div>
+        <table>
+          {% for value in resultat %}
+            <tr>
+              <td>{{value}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+    </main>
+
+
+</body>
+</html>
