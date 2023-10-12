@@ -85,12 +85,7 @@
                         {% endfor %}
                     </tr>
                 </table>
-
-                <div class=legende>
-                    <p>Pour changer la couleur d'une case, vous pouvez simplement cliquer dessus.</p>
-                    <p>Si vous souhaitez changer la couleur de plusieurs cases, vous pouvez également appuyer sur l'une des touches 'R', 'O', 'J', 'V' ou 'D', puis effectuer un cliqué-glissé
-                    </p>
-                    <div/>
+               
             
             {% elif current_model == 'XEJ' %}
                 <h2>Résultats:</h2>
@@ -142,16 +137,14 @@
                 </table>
             {% endif %}
             
-            <button class="btn" id="copyImageBtn">Copier Image</button>
-            <canvas id="tableCanvas" style="display: none;"></canvas>
-
-
+            <button class="btn copy-image">Copier Tableau</button>
 
             <div class=legende>
                 <p>Pour changer la couleur d'une case, vous pouvez simplement cliquer dessus.</p>
                 <p>Si vous souhaitez changer la couleur en survolant plusieurs cases, vous pouvez également appuyer sur l'une des touches 'R', 'O', 'J', 'V' ou 'D', puis effectuer un cliqué-glissé</p>
                 <div/>
 
+            <img id="tableImage" style="display: none;">
         {% endif %}
 
         
@@ -266,29 +259,43 @@
                 break;
         }
     });
+    
+    var copyImageBtn = document.querySelector('.copy-image');
+    copyImageBtn.addEventListener('click', function(event) {
+        const table = document.getElementById('mytable'); // Sélectionnez le tableau
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // ...
-    
-        // Gestionnaire d'événements pour le bouton "Copier Image"
-        const copyImageBtn = document.getElementById('copyImageBtn');
-        copyImageBtn.addEventListener('click', function () {
-            // Utilisez html2canvas pour capturer le contenu du tableau sous forme d'image
-            const table = document.getElementById('mytable');
-    
-            html2canvas(table).then(function (canvas) {
-                // Créez une balise img et définissez son src pour qu'il pointe vers l'image générée
-                const img = new Image();
-                img.src = canvas.toDataURL('image/png');
-    
-                // Sélectionnez l'image et copiez-la dans le presse-papiers
-                img.select();
-                document.execCommand('copy');
-    
-                alert('Image copiée dans le presse-papiers !');
-            });
+        html2canvas(table).then(function(canvas) {
+            const img = new Image();
+            img.src = canvas.toDataURL('image/png');
+
+            // Sélectionnez l'image générée
+            const imageElem = document.getElementById('tableImage');
+
+            if (imageElem) {
+                imageElem.src = img.src;
+                imageElem.style.display = 'block'; // Afficher l'image générée
+                img.style.display = 'none'; // Masquer l'image par défaut
+
+                var range = document.createRange();
+                range.selectNode(imageElem);
+                window.getSelection().addRange(range);
+
+                try {
+                    var successful = document.execCommand('copy');
+                    var msg = successful ? 'réussi' : 'échoué';
+                    console.log('Commande de copie de l\'image ' + msg);
+                    alert('Image copiée dans le presse-papiers !');
+                } catch(err) {
+                    console.log('Oops, impossible de copier l\'image');
+                }
+
+                window.getSelection().removeAllRanges();
+                imageElem.style.display = 'none'; // Masquer à nouveau l'image
+            } else {
+                console.log('Aucune image générée trouvée.');
+            }
         });
     });
- 
+
 </script>
 </html>
