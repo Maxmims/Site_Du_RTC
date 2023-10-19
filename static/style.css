@@ -428,6 +428,8 @@ td {
     border-collapse: collapse; /* Fusionner les bordures du tableau */
     margin: 0; /* Supprimer la marge externe du tableau */
     padding: 0; /* Supprimer le padding du tableau */
+    font-size: 0.85rem;
+
 }
 
 .no-padding-table th,
@@ -491,7 +493,22 @@ td {
     border-top: none !important;
 }
 
+td[data-tooltip]:hover:after {
+    content: attr(data-tooltip);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 999;
+    top: 100%; /* Position sous la cellule */
+    left: 0;
+    display: block;
+}
 
+.tooltip-multiline {
+    white-space: pre-line;
+}
 
 /* Styles supplémentaires pour rendre les rectangles responsifs */
 @media screen and (max-width: 768px) {

@@ -4,49 +4,39 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            /* Styles CSS pour le message de copie */
-            .custom-copy-message {
-                display: none;
-                position: fixed;
-                top: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                background-color: rgba(0, 0, 0, 0.7);
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                text-align: center;
-                z-index: 999;
-            }
-            
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <style>           
             /* Largeur des colonnes */
             th:first-child,
             td:first-child {
-                width: 12%; /* Largeur de la colonne "NE" */
+                width: 14%; /* Largeur de la colonne "NE" */
             }
             
             th:nth-child(2),
             td:nth-child(2) {
                 width: 9%; /* Largeur de la colonne "CN" */
             }
-            
-            th:nth-child(5),
-            td:nth-child(5) {
-                width: 15%; /* Largeur de la colonne "Actions" */
-            }
-            
-            /* Laisser plus d'espace aux colonnes "Rainure" et "URTL" */
-            th:nth-child(4),
-            td:nth-child(4) {
-                width: 44%; /* Largeur des colonnes "Rainure" et "URTL" */
-            }
 
             th:nth-child(3),
             td:nth-child(3){
-                width: 20%; /* Largeur des colonnes "Rainure" et "URTL" */
+                width: 18%; /* Largeur des colonnes "Rainure" */
             }
-        
+            
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 14%; /* Largeur  "ETAT" */
+            }
+            th:nth-child(5),
+            td:nth-child(5) {
+                width: 34%; /* Largeur de la colonne "Actions" */
+            }
+            
+            th:nth-child(6),
+            td:nth-child(6) {
+                width: 15%; /* Largeur  "ETAT" */
+            }
+       
         </style>
         
         <title>Abfase</title> 
@@ -65,11 +55,6 @@
                     <input type="submit" class="btn btn-primary" value="Exécuter">
                 </form>            
             </div>
-             <!-- Message de copie personnalisé -->
-            <div class="custom-copy-message" id="custom-copy-message">
-                Contenu copié dans le presse-papiers :
-                <div id="copied-content"></div>
-            </div>
 
             <table class="no-padding-table">
                 <thead>
@@ -77,6 +62,7 @@
                     <th>NE</th>
                     <th>CN</th>
                     <th>Rainure CN1G/CNHD/CNEHD</th>
+                    <th>ETAT</th>
                     <th>URTL</th>
                     <th>Actions</th>
                   </tr>
@@ -87,6 +73,8 @@
                     <td class="no-padding-table">{{ item['NE'] }}</td>
                     <td class="no-padding-table">{{ item['CN'] }}</td>
                     <td class="no-padding-table">{{ item['Rainures'] }}</td>
+                    <td data-tooltip="ETAT: {{ item.ETAT }} ,  Type Accès: {{ data_attributes[item.ETAT.strip()].get('data-type-acces') }}, Signification: {{ data_attributes[item.ETAT.strip()].get('data-signification') }}, Intervenant: {{ data_attributes[item.ETAT.strip()].get('data-intervenant') }}"
+                    class="no-padding-table tooltip-multiline">{{ item['ETAT'] }}</td>
                     <td class="no-padding-table"><span class="URTL">{{ item['URTL'] }}</span></td>
                     <td class="no-padding-table">
                         <button class="btn btn-small" onclick="copierContenu(this)">Copier URTL</button>
@@ -190,10 +178,6 @@
             });
 
 
-
-            
-
-
             function copierContenu(button) {
                 const row = button.closest('tr'); // Trouver la ligne parente (tr) du bouton cliqué
                 const urtlElement = row.querySelector('.URTL'); // Rechercher l'élément avec la classe URTL dans la ligne
@@ -221,6 +205,34 @@
                     alert('Élément avec la classe URTL non trouvé dans la ligne.');
                 }
             }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                // Sélectionnez toutes les cellules de la colonne "ETAT" avec la classe tooltip-multiline
+                const etatCells = document.querySelectorAll('td.tooltip-multiline');
+            
+                etatCells.forEach(function(etatCell) {
+                  etatCell.addEventListener("click", function() {
+                    // Obtenez le contenu de l'attribut data-tooltip
+                    const tooltipContent = this.getAttribute("data-tooltip");
+            
+                    // Créez un élément de texte temporaire pour le copier dans le presse-papiers
+                    const tempTextarea = document.createElement('textarea');
+                    tempTextarea.value = tooltipContent;
+                    document.body.appendChild(tempTextarea);
+                    tempTextarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextarea);
+            
+                    // Affichez un message pour indiquer que le contenu a été copié
+                    alert('Contenu de la case "ETAT" copié dans le presse-papiers.');
+            
+                    // Vous pouvez également afficher le contenu copié où vous le souhaitez dans votre page.
+                    // Par exemple, vous pouvez le mettre dans un élément div.
+                    // const copiedContentDiv = document.getElementById('copied-content');
+                    // copiedContentDiv.textContent = tooltipContent;
+                    });
+                });
+            });
         </script>
     </body>
 

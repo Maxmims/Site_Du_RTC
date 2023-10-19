@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang=fr>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>           
+            /* Largeur des colonnes */
+            th:first-child,
+            td:first-child {
+                width: 5%; /* Largeur de la colonne "NE" */
+            }
+            
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 5%; /* Largeur de la colonne "CN" */
+            }
+
+            th:nth-child(3),
+            td:nth-child(3){
+                width: 15%; /* Largeur des colonnes "Rainure" */
+            }
+            
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 23%; /* Largeur  "ETAT" */
+            }
+            th:nth-child(5),
+            td:nth-child(5) {
+                width: 10%; /* Largeur de la colonne "Actions" */
+            }
+            
+            th:nth-child(6),
+            td:nth-child(6) {
+                width: 32%; /* Largeur  "ETAT" */
+            }
+            
+            th:nth-child(7),
+            td:nth-child(7) {
+                width: 10%; /* Largeur  "ETAT" */
+            }
+       
+        </style>
+        
+        <title>Anoil URA2G</title> 
+    </head>
+    <body class="special-page">
+        <div id="header">
+            <a href="/"  class="Accueil-lien">
+                <img src="static/images/maison.png" alt="Accueil">   
+            </a>
+            <h1>Anoil URA2G</h1>
+        </div>
+        <main>
+            <div class="box">
+                <form action="/Anoil" method="POST">
+                    <textarea name="ne" id="myTextarea" class="customTextarea" placeholder="Collez votre ANOIL" required=""></textarea><br>
+                    <input type="submit" class="btn btn-primary" value="Exécuter">
+                </form>            
+            </div>
+            {% if results is defined %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ENS</th>
+                        <th>P</th>
+                        <th>Carte</th>
+                        <th>URTL</th>
+                        <th>Position</th>
+                        <th>Information</th>
+                        <th>Occurrences</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.ENS }}</td>
+                        <td>{{ result.P }}</td>
+                        <td>{{ result.Carte }}</td>
+                        <td>{{ result.URTL }}</td>
+                        <td>{{ result.Position }}</td>
+                        <td>{{ result.Information }}</td>
+                        <td>{{ result.Occurrences }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            
+              
+  
+        </main>
+
+    </body>
+
+</html>

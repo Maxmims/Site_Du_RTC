@@ -1,0 +1,93 @@
+{
+    "ALA": {
+      "Type d'accès": "T0",
+      "Signification": "Trouvé en général sur des install PABX, le problème vient la plupart du temps d'un défaut du PABX.",
+      "Intervenant": "IP 90%, FT 10%"
+    },
+    "ASI": {
+      "Type d'accès": "T0",
+      "Signification": "Si trouvé seul : souvent défaut IP, Si trouvé à la suite d'un DER : pas significatif, attendre 20mn... si toujours pareil après 20mn, envoyer un technicien dans le doute !",
+      "Intervenant": "IP 90%, FT 10%"
+    },
+    "ASI +QTI": {
+      "Type d'accès": "T0",
+      "Signification": "Si trouvé seul : souvent défaut IP, Si trouvé à la suite d'un DER : pas significatif, attendre 20mn... si toujours pareil après 20mn, envoyer un technicien dans le doute !",
+      "Intervenant": "IP 90%, FT 10%"
+    },
+    "FXA": {
+      "Type d'accès": "ANA",
+      "Signification": "Faux appel",
+      "Intervenant": "FT"
+    },
+    "ASI +QTI +DITA": {
+      "Type d'accès": "T0",
+      "Signification": "Vient souvent d'une TNR bloquée : essayer un déblocage par ESAB avec PH=L puis PH=TCO puis vérifier par ABFASE ... si toujours pareil après, envoyer un technicien dans le doute !",
+      "Intervenant": "FT (Lignes)"
+    },
+    "ASI +QTI +DLAN": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut en ligne FT (ou sur la TNR)",
+      "Intervenant": "FT (Lignes)"
+    },
+    "BLOS": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Blocage commutation",
+      "Intervenant": "FT (UI)"
+    },
+    "DENI": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut non identifié : Essayer un déblocage par ESAB avec PH=L et ensuite PH=TCO puis vérifier par ABFASE ... si rien n'évolue après plusieurs tentatives, envoyer un technicien dans le doute !",
+      "Intervenant": "FT (Lignes)"
+    },
+    "DITA": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut après la TNR (chez client)",
+      "Intervenant": "IP (ou PABX FT)"
+    },
+    "DLAN": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut en ligne FT (ou sur la TNR)",
+      "Intervenant": "FT (Lignes)"
+    },
+    "DLAR": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut entre la commutation et le répéteur (compris)",
+      "Intervenant": "FT (Lignes ou URR)"
+    },
+    "DLAT": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut entre le répéteur (non compris) et la TNR",
+      "Intervenant": "FT (Lignes ou URR)"
+    },
+    "DLAN +DITA": {
+      "Type d'accès": "uniquement T2",
+      "Signification": "Impossible de déterminer le défaut : Souvent Téléalim à réenclencher par les Trans suite orages",
+      "Intervenant": "FT 80%, IP 17%"
+    },
+    "DTNR": {
+      "Type d'accès": "uniquement T0",
+      "Signification": "Défaut affectant la TNR",
+      "Intervenant": "FT (Lignes)"
+    },
+    "FAUT": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Défaut commutation",
+      "Intervenant": "FT (UI)"
+    },
+    "QTD": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Mauvaise qualité si trouvé seul : Tester la ligne par ESAB ou 20H pour tenter de déterminer si IP ou FT",
+      "Intervenant": "IP 50%, FT 50%"
+    },
+    "QTI": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Mauvaise qualité si trouvé seul : Tester la ligne par ESAB ou 20H pour tenter de déterminer si IP ou FT",
+      "Intervenant": "IP 50%, FT 50%"
+    },
+    "SAIN": {
+      "Type d'accès": "T0 ou T2",
+      "Signification": "Tout est OK en ligne + commut + TNR : Donc si le client se plaint, le défaut est sur son installation",
+      "Intervenant": "IP (ou PABX FT)"
+    }
+  }
+  

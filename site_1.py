@@ -13,6 +13,12 @@ with open('templates/data/categorie.json','r', encoding='utf-8') as categorie_fi
 with open('templates/data/marque.json','r', encoding='utf-8') as marque_file:
     marque_data = json.load(marque_file)
 
+with open('templates/data/etat.json','r', encoding='utf-8') as etat_file:
+    infos_etat = json.load(etat_file)
+    
+with open('templates/data/anoil_ura.json','r', encoding='utf-8') as anoil_file:
+    anoil_ura = json.load(anoil_file)
+    
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['JSON_AS_ASCII'] = False
 
@@ -42,6 +48,8 @@ valeurs_ut = [
     "TYCN<br>CN1G<br>CNHD CNpaire/impaire<br>CNEHD",
 ]
 
+def remove_leading_zeros(s):
+    return re.sub(r'^0+', '', s)
 
 def extract_codes(text, prefix):
     # Find the part of the text after the prefix
@@ -111,6 +119,10 @@ def Abfase():
 @app.route('/Type')
 def Type():
     return render_template('Type.html')
+
+@app.route('/Anoil')
+def Anoil():
+    return render_template('Odiag.html')
 
 @app.route('/Fetut', methods=['POST'])
 def executer_programme():
@@ -506,7 +518,7 @@ def executer_Abfase():
     
     # Définissez la fonction obtenir_numero_ut
     def obtenir_numero_ut(reglette, broche):
-        if reglette % 2 == 0:
+        if int(reglette) % 2 == 0:
             dictionnaire = dictionnaire_paire
         else:
             dictionnaire = dictionnaire_impaire
@@ -515,26 +527,47 @@ def executer_Abfase():
             bornes = plage.split("<=")
             debut = int(bornes[0])
             fin = int(bornes[1])
+            broche = int(broche)
             if debut <= broche <= fin:
                 return numero_ut
         return "Inconnu"
     
     if request.method == 'POST':
         ne_data = request.form.get('ne')
-    # Exemple d'analyse : recherche de la chaîne "NE =" dans le texte
-    matches = re.findall(r"NE\s*=\s*(\d+)-(\d+)-(\d+)", ne_data)
+    # Exemple d'analyse : recherche de la chaîne "NE =" suivie de "ETAT =" dans le texte
+    matches = re.findall(r"NE\s*=\s*(\d+)-(\d+)-(\d+).*?ETAT\s*=\s*(.*)", ne_data)
+
 
     result_data = []  # Une liste pour stocker les résultats
     precedent_ur = None  # Variable pour stocker la valeur précédente d'UR
     precedent_cn = None  # Variable pour stocker la valeur précédente de CN
     precedent_ut = None  # Variable pour stocker la valeur précédente de UT
+    data_attributes = {}  # Un dictionnaire pour stocker les attributs de données
+
 
     for match in matches:
-        ur, reglette, broche = map(int, match)
+        ur, reglette, broche, etat = match 
+
+        # Accédez aux informations à partir du fichier JSON
+        etat = etat.strip()
+        etat_info = infos_etat.get(etat, {})
+        
+        # Utilisez les informations comme vous le souhaitez
+        type_acces = etat_info.get("Type d'accès", "Information non disponible")
+        signification = etat_info.get("Signification", "Information non disponible")
+        intervenant = etat_info.get("Intervenant", "Information non disponible")
+        
+        # Créez un dictionnaire avec les données
+        data_attributes[etat] = {
+            "data-type-acces": type_acces,
+            "data-signification": signification,
+            "data-intervenant": intervenant
+        }
+        
         numero_ut = obtenir_numero_ut(reglette, broche)
         # Calculer le numéro de CN en fonction du numéro de réglette
         if reglette is not None:
-            numero_cn = reglette // 2
+            numero_cn = int(reglette) // 2
             if numero_cn % 2 != 0:
                 numero_cn = numero_cn
         else:
@@ -547,13 +580,13 @@ def executer_Abfase():
                 rainures = valeurs_ut_si_cn_paire.get(f"UT{numero_ut}", "Aucune valeur trouvée")
             else:
                 rainures = valeurs_ut_si_cn_impaire.get(f"UT{numero_ut}", "Aucune valeur trouvée")
-            result_data.append({'NE': f'NE ={ur}-{reglette}-{broche}', 'CN': f'CN:{numero_cn}-UT:{numero_ut}', 'Rainures': rainures})
+            result_data.append({'NE': f'NE={ur}-{reglette}-{broche}', 'CN': f'CN:{numero_cn}-UT:{numero_ut}','ETAT':etat, 'Rainures': rainures})
         else:
             if numero_cn % 2 == 0:
                 rainures = valeurs_ut_si_cn_paire.get(f"UT{numero_ut}", "Aucune valeur trouvée")
             else:
                 rainures = valeurs_ut_si_cn_impaire.get(f"UT{numero_ut}", "Aucune valeur trouvée")
-            result_data.append({'NE': f'NE ={ur}-{reglette}-{broche}', 'CN': f'CN:{numero_cn}-UT:{numero_ut}', 'Rainures': rainures, 'URTL': urtl})
+            result_data.append({'NE': f'NE={ur}-{reglette}-{broche}', 'CN': f'CN:{numero_cn}-UT:{numero_ut}','ETAT': etat, 'Rainures': rainures, 'URTL': urtl})
 
           
         precedent_ur = ur
@@ -561,8 +594,87 @@ def executer_Abfase():
         precedent_ut = numero_ut
         
 
-    return render_template('Abfase.html', result=result_data)
+    return render_template('Abfase.html', result=result_data, data_attributes=data_attributes)
 
+@app.route('/Anoil', methods=['POST'])
+def executer_Anoil():
+    if request.method == 'POST':
+        # Initialisation d'une liste pour stocker les résultats
+        results = []
+        
+        # Initialisation d'un dictionnaire pour compter les occurrences
+        occurrences = {}
+
+        # Récupérer les données de l'utilisateur depuis le formulaire HTML
+        donnees_utilisateur = request.form.get('ne')
+
+        # Division des données en lignes
+        lines = donnees_utilisateur.split('\n')
+
+        # Parcourir chaque ligne et extraire ENS et P
+        for line in lines:
+            ens_match = re.search(r'ENS=(\d+)', line)
+            p_match = re.search(r'P=\'(.*?)\'', line)
+
+            if ens_match:
+                ens = remove_leading_zeros(ens_match.group(1))
+                if p_match:
+                    p_hex = p_match.group(1)
+                    # Extraire les deux derniers caractères
+                    p_hex_last_two = p_hex[-2:]
+                    # Convertir en décimal
+                    p = str(int(p_hex_last_two, 16))
+                else:
+                    p = None
+                
+                # Recherche de la correspondance dans les données JSON
+                correspondance = None
+                if p:
+                    for entry in anoil_ura['tableau'][1:]:
+                        if entry[0] == ens and entry[1] == p:
+                            correspondance = entry
+                            break
+                else:
+                    for entry in anoil_ura['tableau'][1:]:
+                        if entry[0] == ens:
+                            correspondance = entry
+                            break
+                
+                # Ajout des résultats
+                if correspondance:
+                    carte = correspondance[2]
+                    urtl = correspondance[4]
+                    position = correspondance[5]
+                    information = correspondance[7]
+                    
+                    # Création d'une clé unique pour le résumé
+                    key_str = f"{ens}_{p}"
+                    
+                    # Incrémentation du compteur d'occurrences
+                    if key_str in occurrences:
+                        occurrences[key_str] += 1
+                    else:
+                        occurrences[key_str] = 1
+
+                    results.append({"ENS": ens, "P": p, "Carte": carte, "URTL": urtl, "Position": position, "Information": information, "Occurrences": occurrences[key_str]})
+
+         # Trouver le nombre maximum d'occurrences pour chaque combinaison ENS-P
+        max_occurrences = {}
+        for result in results:
+            key_str = f"{result['ENS']}_{result['P']}"
+            if key_str in max_occurrences:
+                max_occurrences[key_str] = max(max_occurrences[key_str], result['Occurrences'])
+            else:
+                max_occurrences[key_str] = result['Occurrences']
+
+        # Filtrer les résultats pour ne conserver que ceux avec le nombre maximum d'occurrences
+        filtered_results = [result for result in results if result['Occurrences'] == max_occurrences[f"{result['ENS']}_{result['P']}"]]
+
+        # Trier les résultats par ordre croissant d'ENS et P
+        sorted_results = sorted(filtered_results, key=lambda x: (int(x['ENS']), int(x['P']) if x['P'] is not None else 0))
+        
+        # Passer les résultats filtrés au modèle HTML
+        return render_template('Odiag.html', results=sorted_results)
 
 if __name__ == '__main__':
     app.run(debug=True)
