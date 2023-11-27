@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, send_from_directory , url_for 
+from collections import defaultdict
 import re
 import json
 
@@ -18,6 +19,12 @@ with open('templates/data/etat.json','r', encoding='utf-8') as etat_file:
     
 with open('templates/data/anoil_ura.json','r', encoding='utf-8') as anoil_file:
     anoil_ura = json.load(anoil_file)
+
+with open('templates/data/urail.json','r', encoding='utf-8') as urail_file:
+    urail = json.load(urail_file)
+
+with open('templates/data/urail_cse.json','r', encoding='utf-8') as urail_cse_file:
+    urail_cse = json.load(urail_cse_file)
     
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['JSON_AS_ASCII'] = False
@@ -88,6 +95,26 @@ def affichage_des_ne_du_couple(numerour,numero_du_couple):
         resultat_list.append(ligne)
     return resultat_list
 
+def extract_data(input_text):
+    data = []
+    ne_pattern = r'NE\s*=\s*(\d+)-(\d+)-(\d+)'
+    nd_pattern = r'ND\s*=\s*(\d+)'
+    lines = input_text.split('\n')
+
+    ne_match = None  # Garde temporairement le NE en cours
+
+    for line in lines:
+        ne_match = re.search(ne_pattern, line)
+        if ne_match:
+            nd_match = re.search(nd_pattern, line)
+            if nd_match:
+                ne = '-'.join(ne_match.groups())
+                nd = nd_match.group(1)
+                data.append({'NE': ne, 'ND': nd})
+
+    return data
+
+
 def is_valid_input(ne_input):
     pattern = r'^\d{1,3}-\d{1,2}-\d{1,3}$'
     return re.match(pattern, ne_input) is not None
@@ -123,6 +150,12 @@ def Type():
 @app.route('/Anoil')
 def Anoil():
     return render_template('Odiag.html')
+
+@app.route('/Urail')
+def Urail():
+    return render_template('Urail.html')
+
+
 
 @app.route('/Fetut', methods=['POST'])
 def executer_programme():
@@ -356,7 +389,7 @@ def executer_programme_NeOfis():
                 resultat = affichage_des_ne_du_couple(numerour,vc)
                 
 
-            return render_template('NeOfis.html', resultat=resultat, couple=vc)    
+            return render_template('NeOfis.html', resultat=resultat, couple=vc, numerour=numerour)     
 
 @app.route('/type', methods=['POST'])
 def executer_programme_Type():
@@ -615,7 +648,9 @@ def executer_Anoil():
         for line in lines:
             ens_match = re.search(r'ENS=(\d+)', line)
             p_match = re.search(r'P=\'(.*?)\'', line)
+            afur_match = re.search(r'AFUR\s?=\s?URAD-\s?(\d+)', line)
 
+            
             if ens_match:
                 ens = remove_leading_zeros(ens_match.group(1))
                 if p_match:
@@ -639,6 +674,8 @@ def executer_Anoil():
                         if entry[0] == ens:
                             correspondance = entry
                             break
+                        
+                
                 
                 # Ajout des résultats
                 if correspondance:
@@ -658,6 +695,11 @@ def executer_Anoil():
 
                     results.append({"ENS": ens, "P": p, "Carte": carte, "URTL": urtl, "Position": position, "Information": information, "Occurrences": occurrences[key_str]})
 
+            
+            
+            if afur_match:
+                numero_UR = afur_match.group(1)
+                    
          # Trouver le nombre maximum d'occurrences pour chaque combinaison ENS-P
         max_occurrences = {}
         for result in results:
@@ -674,7 +716,77 @@ def executer_Anoil():
         sorted_results = sorted(filtered_results, key=lambda x: (int(x['ENS']), int(x['P']) if x['P'] is not None else 0))
         
         # Passer les résultats filtrés au modèle HTML
-        return render_template('Odiag.html', results=sorted_results)
+        return render_template('Odiag.html', results=sorted_results, UR=numero_UR)
+
+
+@app.route('/Urail', methods=['POST'])
+def executer_Urail():
+    if request.method == 'POST':
+        input_text = request.form.get('ne')
+        # Vérifier si "***" est présent dans la chaîne input_text
+        if '***' in input_text:
+            # Traitement des données avec le fichier JSON urail
+            urail_data = urail
+            alv_data = ["ALV3", "ALV4", "ALV5", "ALV6"]
+            rn_values = ["RN1", "RN2", "RN3", "RN4", "RN5", "RN6", "RN7", "RN8", "RN11", "RN12", "RN13", "RN14", "RN15", "RN16", "RN17", "RN18"]
+            current_model = 'URA2G'
+        else:
+            # Traitement des données avec le fichier JSON urail_cse
+            urail_data = urail_cse  # Assurez-vous d'avoir cette fonction
+            alv_data = ["ALV2", "ALV3", "ALV7", "ALV8"]
+            rn_values = ["RN6", "RN13", "RN20", "RN27", "RN35", "RN42", "RN49", "RN56","RN64", "RN71", "RN78", "RN85", "RN93", "RN100", "RN107", "RN114"]
+            current_model = 'CSE'
+        
+        data = extract_data(input_text)
+        # Initialisation d'un dictionnaire pour compter les correspondances
+        matching_keys_count = defaultdict(int)
+        
+        for item in data:
+            ne = item['NE'].split('-')[-2:] 
+            ne = '-'.join(ne) 
+            matching_keys = []
+
+            for alv, alv_data in urail_data.items():
+                for rn_key, rn_values in alv_data.items():
+                    if any(ne in value for value in rn_values):
+                        matching_keys.append(f"{alv} {rn_key}")
+
+            item['MatchingKeys'] = matching_keys
+        
+        
+
+        # Parcours de la liste data
+        for item in data:
+            matching_keys = item['MatchingKeys']
+            # Compter chaque Matching Key
+            for key in matching_keys:
+                matching_keys_count[key] += 1
+
+        # Enregistrer les résultats dans un dictionnaire pour les afficher dans le modèle HTML
+        results = dict(matching_keys_count)
+
+        # Initialisation d'un dictionnaire pour stocker les nouvelles données
+        formatted_data = {}
+
+        # Parcours de la liste de données actuelle
+        for item in data:
+            matching_keys = item['MatchingKeys']
+            ne = item['NE']
+            nd = item['ND']
+
+            # Parcours des clés correspondantes
+            for key in matching_keys:
+                if key in formatted_data:
+                    formatted_data[key].append(f"NE={ne} ND={nd}")
+                else:
+                    formatted_data[key] = [f"NE={ne} ND={nd}"]
+                    
+        # Formate les données sans crochets et virgules
+        for key, value in formatted_data.items():
+            formatted_data[key] = ' '.join(value)
+              
+    return render_template('Urail.html', results = results, data = formatted_data, model = current_model) 
+
 
 if __name__ == '__main__':
     app.run(debug=True)

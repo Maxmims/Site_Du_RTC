@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang=fr>
+<html lang="fr">
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
     <meta charset="utf-8">
@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="header">
-        <a href="/"  class="Accueil-lien">
+        <a href="/" class="Accueil-lien">
             <img src="static/images/maison.png" alt="Accueil">   
         </a>
         <h1>Les NE du couple</h1>
@@ -18,15 +18,16 @@
             <form action="/NeOfis" method="POST" id="myForm">
                 <textarea name="ne" id="myTextarea" class="customTextarea" placeholder="Entrez votre NE ici..." required="" onkeydown="return event.key != 'Enter';"></textarea><br>
                 <input type="submit" class="btn btn-primary" value="Exécuter">
-            </form>            
+            </form> 
         </div>
         <script>
             document.getElementById('myForm').addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
-                    event.preventDefault(); // Empêcher le comportement par défaut (nouvelle ligne)
-                    document.getElementById('myForm').submit(); // Soumettre le formulaire
+                    event.preventDefault();
+                    document.getElementById('myForm').submit();
                 }
             });
+           
         </script>
         {% if ne_error %}
             <p class="error-message">{{ ne_error }}</p>
@@ -37,47 +38,135 @@
         {% endif %}
 
         {% if resultat %}
-        <h2>Résultats pour le couple N&#176;{{couple}}:</h2>
-        <div class="table-container">
-            <table border="1">
-                {% for ligne in resultat %}
-                <tr>
-                    {% for cellule in ligne %}
-                    <td>
-                        <div class="zoomable" data-color="default">{{ cellule }}</div>
-                    </td>
+            <div class="table-container">
+                <h2>Résultats pour le couple N&#176;<span id="couple">{{ couple }}</span> de l'UR:<span id="numerour">{{ numerour }}</span></h2>
+                <table border="1">
+                    {% for ligne in resultat %}
+                    <tr>
+                        {% for cellule in ligne %}
+                        <td>
+                            <div class="zoomable" style="background-color: white;">{{ cellule }}</div>
+                        </td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
+                </table>
+                <button class="btn btn-primary increase-couple">+</button>
+                <button class="btn btn-primary decrease-couple">-</button>
+            </div>
         {% endif %}
     </main>
-</body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const cells = document.querySelectorAll('.zoomable');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tableContainer = document.querySelector('.table-container');
+            const table = tableContainer.querySelector('table');
+            const cells = table.querySelectorAll('.zoomable');
+            let currentCouple = parseInt(document.getElementById('couple').textContent);
+            let currentNumerour = parseInt(document.getElementById('numerour').textContent);
+    
+            // Créez un objet pour stocker les couleurs par paire UR/couple
+            const colorsByURCouple = {};
 
-        cells.forEach(function (cell) {
-            cell.addEventListener('click', function () {
-                const currentColor = this.getAttribute('data-color');
-                switch (currentColor) {
-                    case 'default':
-                        this.style.backgroundColor = 'red';
-                        this.setAttribute('data-color', 'red');
-                        break;
-                    case 'red':
-                        this.style.backgroundColor = 'green';
-                        this.setAttribute('data-color', 'green');
-                        break;
-                    case 'green':
-                        this.style.backgroundColor = '#e7eef6'; // Couleur par défaut (blanc)
-                        this.setAttribute('data-color', 'default');
-                        break;
-                    default:
-                        break;
+            // Fonction pour initialiser ou obtenir les couleurs pour la paire UR/couple actuelle
+            function initColors() {
+                const key = `${currentNumerour}-${currentCouple}`;
+                if (!(key in colorsByURCouple)) {
+                    colorsByURCouple[key] = [];
+                    for (let i = 0; i < 16; i++) {
+                        let ligne = [];
+                        for (let j = 0; j < 8; j++) {
+                            ligne.push('default');
+                        }
+                        colorsByURCouple[key].push(ligne);
+                    }
+                }
+                return colorsByURCouple[key];
+            }
+    
+            let colors = initColors();
+    
+            // Fonction pour mettre à jour le tableau des couleurs actuel
+            function updateTableColors() {
+                const key = `${currentNumerour}-${currentCouple}`;
+                colorsByURCouple[key] = colors;
+            }
+    
+            function generateNEData(numerour, couple) {
+                let resultatList = [];
+                for (let i = 0; i < 16; i++) {
+                    let ligne = [];
+                    for (let j = 0; j < 8; j++) {
+                        ligne.push(`NE=${numerour}-${(j).toString().padStart(2, '0')}-${couple + i * 8}`);
+                        
+                    }
+                    
+                    resultatList.push(ligne);
+                }
+                return resultatList;
+            }
+    
+            document.querySelector('.increase-couple').addEventListener('click', function () {
+                if (currentCouple < 7) {
+                    // Sauvegardez les couleurs du tableau actuel
+                    updateTableColors();
+                    currentCouple += 1;
+                    document.getElementById('couple').textContent = currentCouple;
+                    // Chargez les couleurs du nouveau tableau, ou initialisez-les si elles n'existent pas
+                    colors = initColors();
+                    updateTableUI(currentNumerour);
                 }
             });
+    
+            document.querySelector('.decrease-couple').addEventListener('click', function () {
+                if (currentCouple > 0) {
+                    // Sauvegardez les couleurs du tableau actuel
+                    updateTableColors();
+                    currentCouple -= 1;
+                    document.getElementById('couple').textContent = currentCouple;
+                    // Chargez les couleurs du nouveau tableau, ou initialisez-les si elles n'existent pas
+                    colors = initColors();
+                    updateTableUI(currentNumerour);
+                }
+            });
+    
+            cells.forEach(function (cell, index) {
+                cell.addEventListener('click', function () {
+                    const currentColor = colors[Math.floor(index / 8)][index % 8];
+                    switch (currentColor) {
+                        case 'default':
+                            this.style.backgroundColor = 'red';
+                            colors[Math.floor(index / 8)][index % 8] = 'red';
+                            break;
+                        case 'red':
+                            this.style.backgroundColor = 'green';
+                            colors[Math.floor(index / 8)][index % 8] = 'green';
+                            break;
+                        case 'green':
+                            this.style.backgroundColor = 'white';
+                            colors[Math.floor(index / 8)][index % 8] = 'default';
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+    
+            // Fonction pour mettre à jour l'interface utilisateur du tableau en cours
+            function updateTableUI(newNumerour) {
+                currentNumerour = newNumerour;
+                const resultatList = generateNEData(newNumerour, currentCouple);
+                cells.forEach(function (cell, index) {
+                    const color = colors[Math.floor(index / 8)][index % 8] || 'default';
+                    cell.style.backgroundColor = color;
+                    cell.textContent = resultatList[Math.floor(index / 8)][index % 8];
+                });
+            }
+    
+            // Au chargement de la page, assurez-vous de charger les couleurs correctes pour la paire UR/couple actuelle
+            updateTableUI(currentNumerour);
         });
-    });
-</script>
+    </script> 
+</body>
 </html>
+
+

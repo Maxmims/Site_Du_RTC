@@ -30,108 +30,65 @@ AFUR=028 TYPUR=URA     NBEQPT=00831 NBFAU=00015 TFAU=001
              NBDEF= 015
 ----NBFAU=00015 (URA:00015  URC:00000)
 
-[
-  {
-    "Défaut": "ALA",
-    "Type d'accès": "T0",
-    "Signification": "Trouvé en général sur des install PABX, le problème vient la plupart du temps d'un défaut du PABX.",
-    "Intervenant": "IP 90%, FT 10%"
-  },
-  {
-    "Défaut": "ASI",
-    "Type d'accès": "T0",
-    "Signification": "Si trouvé seul : souvent défaut IP, Si trouvé à la suite d'un DER : pas significatif, attendre 20mn... si toujours pareil après 20mn, envoyer un technicien dans le doute !",
-    "Intervenant": "IP 90%, FT 10%"
-  },
-  {
-    "Défaut": "ASI +QTI",
-    "Type d'accès": "T0",
-    "Signification": "Si trouvé seul : souvent défaut IP, Si trouvé à la suite d'un DER : pas significatif, attendre 20mn... si toujours pareil après 20mn, envoyer un technicien dans le doute !",
-    "Intervenant": "IP 90%, FT 10%"
-  },
-  {
-    "Défaut": "ASI +QTI +DITA",
-    "Type d'accès": "T0",
-    "Signification": "Vient souvent d'une TNR bloquée : essayer un déblocage par ESAB avec PH=L puis PH=TCO puis vérifier par ABFASE ... si toujours pareil après, envoyer un technicien dans le doute !",
-    "Intervenant": "FT (Lignes)"
-  },
-  {
-    "Défaut": "ASI +QTI +DLAN",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut en ligne FT (ou sur la TNR)",
-    "Intervenant": "FT (Lignes)"
-  },
-  {
-    "Défaut": "BLOS",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Blocage commutation",
-    "Intervenant": "FT (UI)"
-  },
-  {
-    "Défaut": "DENI",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut non identifié : Essayer un déblocage par ESAB avec PH=L et ensuite PH=TCO puis vérifier par ABFASE ... si rien n'évolue après plusieurs tentatives, envoyer un technicien dans le doute !",
-    "Intervenant": "FT (Lignes)"
-  },
-  {
-    "Défaut": "DITA",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut après la TNR (chez client)",
-    "Intervenant": "IP (ou PABX FT)"
-  },
-  {
-    "Défaut": "DLAN",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut en ligne FT (ou sur la TNR)",
-    "Intervenant": "FT (Lignes)"
-  },
-  {
-    "Défaut": "DLAR",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut entre la commutation et le répéteur (compris)",
-    "Intervenant": "FT (Lignes ou URR)"
-  },
-  {
-    "Défaut": "DLAT",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut entre le répéteur (non compris) et la TNR",
-    "Intervenant": "FT (Lignes ou URR)"
-  },
-  {
-    "Défaut": "DLAN +DITA",
-    "Type d'accès": "uniquement T2",
-    "Signification": "Impossible de déterminer le défaut : Souvent Téléalim à réenclencher par les Trans suite orages",
-    "Intervenant": "FT 80%, IP 17%"
-  },
-  {
-    "Défaut": "DTNR",
-    "Type d'accès": "uniquement T0",
-    "Signification": "Défaut affectant la TNR",
-    "Intervenant": "FT (Lignes)"
-  },
-  {
-    "Défaut": "FAUT",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Défaut commutation",
-    "Intervenant": "FT (UI)"
-  },
-  {
-    "Défaut": "QTD",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Mauvaise qualité si trouvé seul : Tester la ligne par ESAB ou 20H pour tenter de déterminer si IP ou FT",
-    "Intervenant": "IP 50%, FT 50%"
-  },
-  {
-    "Défaut": "QTI",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Mauvaise qualité si trouvé seul : Tester la ligne par ESAB ou 20H pour tenter de déterminer si IP ou FT",
-    "Intervenant": "IP 50%, FT 50%"
-  },
-  {
-    "Défaut": "SAIN",
-    "Type d'accès": "T0 ou T2",
-    "Signification": "Tout est OK en ligne + commut + TNR : Donc si le client se plaint, le défaut est sur son installation",
-    "Intervenant": "IP (ou PABX FT)"
-  }
-]
 
+
+URAIL:NE=32-6-0<127
+    CEN=1/23-10-23/08 H 45 MN 34/LISTAGE EQUIPEMENTS U.R.A.
+    TRAITEMENT TPSSER ACC
+
+    AFUR=032 TYPUR=URA     NBEQPT=0225
+    NE= 032-06-000  ND=     35758018 O2F
+    NE= 032-06-003  ND=     35379010 O2F
+    NE= 032-06-019  ND=     35376230 O2F
+    NE= 032-06-020  ND=     35374216 O2F
+    NE= 032-06-026  ND=     35376922 O2F
+    NE= 032-06-027  ND=     35378107 O2F
+    NE= 032-06-032  ND=     35375245 O2F
+    NE= 032-06-033  ND=     35378414 O2F
+    NE= 032-06-035  ND=     35378858 O2F
+    NE= 032-06-053  ND=     35811151 O2F
+    NE= 032-06-055  ND=     35370421 O2F
+    NE= 032-06-067  ND=     35378002 O2F
+    NE= 032-06-068  ND=     35927589 O2F
+    NE= 032-06-069  ND=     35666485 O2F
+    NE= 032-06-077  ND=     35757125 O2F
+    NE= 032-06-082  ND=     35923109 O2F
+    NE= 032-06-083  ND=     35921553 O2F
+    NE= 032-06-086  ND=     35239130 O2F
+    NE= 032-06-089  ND=     35790125 O2F
+    NE= 032-06-093  ND=     35666706 O2F
+    NE= 032-06-096  ND=     35923129 O2F
+    NE= 032-06-106  ND=     32961759 O2F
+    NE= 032-06-111  ND=     35374001 O2F
+    NE= 032-06-115  ND=     35926490 O2F
+    NE= 032-06-116  ND=     35915217 O2F
+    NE= 032-06-119  ND=     35813262 O2F
+    NE= 032-06-120  ND=     35735452 O2F
+
+bug a vérifier
+
+AFUR=033 TYPUR=URA     NBEQPT=01482
+             NE   =033-00-017 ND=  67224345 ETAT = FAUT
+             NE   =033-00-019 ND=  99549276 ETAT = FAUT
+             NE   =033-00-021 ND=  67150091 ETAT = FAUT
+             NE   =033-04-080 ND=  67736312 ETAT = BLOS
+             NE   =033-04-082 ND=  67506894 ETAT = BLOS
+             NE   =033-04-085 ND=  67223981 ETAT = BLOS
+             NE   =033-04-086 ND=  99543114 ETAT = BLOS
+             NE   =033-04-088 ND=  67855590 ETAT = BLOS
+
+             NE   =033-04-091 ND=  99530358 ETAT = BLOS
+             NE   =033-04-093 ND=  67813594 ETAT = BLOS
+             NE   =033-04-094 ND=  67826613 ETAT = BLOS
+             NE   =033-05-064 ND=  67276599 ETAT = BLOS
+             NE   =033-05-065 ND=  6765A121 ETAT = BLOS
+             NE   =033-05-066 ND=  67657366 ETAT = BLOS
+             NE   =033-05-067 ND=  67274148 ETAT = BLOS
+             NE   =033-05-068 ND=  67225550 ETAT = BLOS
+             NE   =033-05-069 ND=  6742A044 ETAT = BLOS
+
+             NE   =033-05-070 ND=  67226420 ETAT = BLOS
+             NE   =033-19-009 ND=  67647854 ETAT = FAUT
+             NBDEF= 019
+
+                           

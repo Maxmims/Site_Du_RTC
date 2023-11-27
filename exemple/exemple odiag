@@ -1,26 +1,4 @@
-Fichier
-Edition
-Redirection
-RHM
-Macro
-Messages
-Fenêtres
-Aideafficher/masquer
-Commande(s)      Assistance : 
-Aucune saisie assistée disponible
- 
-répéter
-envoyer	F1
-F2
-F3	F4
-F5
-F6
-ANOIL:AFUR=89,DD=23-10-13,HD=8-00
-    CEN=1/23-10-13/13 H 01 MN 09/EDITION DES DERNIERES ANOMALIES
-    TRAITEMENT TDRHM0 ACC
 
-*   #F0603/T11F03/NCEN=AM26  /23-10-13/08 H 00/NOM=ODIAG
-    /N=4543/NIV=2/ENS=008/P='0002'H
     /EM: AFUR =URAD- 89
 
 *   #F0603/T11F03/NCEN=AM26  /23-10-13/08 H 01/NOM=ODIAG
@@ -1014,7 +992,7 @@ ANOIL:AFUR=89,DD=23-10-13,HD=8-00
     /EM: AFUR =URAD- 89
 
 *   #F0603/T11F03/NCEN=AM26  /23-10-13/11 H 43/NOM=ODIAG
-    /N=3820/NIV=2/ENS=008/P='0002'H
+    /N=3820/NIV=2/ENS=021/P='0002'H
     /EM: AFUR =URAD- 89
 
 *   #F0603/T11F03/NCEN=AM26  /23-10-13/11 H 44/NOM=ODIAG

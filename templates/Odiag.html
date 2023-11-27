@@ -19,21 +19,21 @@
 
             th:nth-child(3),
             td:nth-child(3){
-                width: 15%; /* Largeur des colonnes "Rainure" */
+                width: 23%; /* Largeur des colonnes "Rainure" */
             }
             
             th:nth-child(4),
             td:nth-child(4) {
-                width: 23%; /* Largeur  "ETAT" */
+                width: 5%; /* Largeur  "ETAT" */
             }
             th:nth-child(5),
             td:nth-child(5) {
-                width: 10%; /* Largeur de la colonne "Actions" */
+                width: 13%; /* Largeur de la colonne "Actions" */
             }
             
             th:nth-child(6),
             td:nth-child(6) {
-                width: 32%; /* Largeur  "ETAT" */
+                width: 39%; /* Largeur  "ETAT" */
             }
             
             th:nth-child(7),
@@ -60,7 +60,7 @@
                 </form>            
             </div>
             {% if results is defined %}
-            <table>
+            <table class="table-anoil">
                 <thead>
                     <tr>
                         <th>ENS</th>
@@ -78,7 +78,7 @@
                         <td>{{ result.ENS }}</td>
                         <td>{{ result.P }}</td>
                         <td>{{ result.Carte }}</td>
-                        <td>{{ result.URTL }}</td>
+                        <td data-urtl="URTL:AFUR={{UR}},TYM=URA2G,ENS=E{{ result.URTL }},LIB=OUI">{{ result.URTL }}</td>
                         <td>{{ result.Position }}</td>
                         <td>{{ result.Information }}</td>
                         <td>{{ result.Occurrences }}</td>
@@ -91,7 +91,29 @@
               
   
         </main>
-
     </body>
+    <script>
+    // Sélectionnez toutes les cellules de la colonne URTL
+    const urtlCells = document.querySelectorAll('td[data-urtl]');
 
+    // Ajoutez un gestionnaire de clic à chaque cellule
+    urtlCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+            // Récupérez le contenu de la cellule à partir de l'attribut data-urtl
+            const urtlContent = cell.getAttribute('data-urtl');
+
+            // Copiez le contenu dans le presse-papiers
+            const textArea = document.createElement('textarea');
+            textArea.value = urtlContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            // Affichez un message ou effectuez d'autres actions si nécessaire
+            alert('Contenu copié dans le presse-papiers');
+        });
+    });
+
+    </script>
 </html>

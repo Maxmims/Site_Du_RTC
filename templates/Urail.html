@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang=fr>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>Urail</title> 
+    </head>
+    <body>
+        <div id="header">
+            <a href="/"  class="Accueil-lien">
+                <img src="static/images/maison.png" alt="Accueil">   
+            </a>
+            <h1>Urail</h1>
+        </div>
+        <main>
+            <div class="box">
+                <form action="/Urail" method="POST">
+                    <textarea name="ne" id="myTextarea" class="customTextarea" placeholder="Collez votre Urail" required=""></textarea><br>
+                    <input type="submit" class="btn btn-primary" value="Exécuter">
+                </form>            
+            </div>
+            
+            {% if results is defined %}
+                {% if model == 'URA2G' %}
+                    {%set rn_values = ["RN1", "RN2", "RN3", "RN4", "RN5", "RN6", "RN7", "RN8", "RN11", "RN12", "RN13", "RN14", "RN15", "RN16", "RN17", "RN18"]%}
+
+                    <h2>Résultats</h2>
+                    <table id="result-table" class="table-urail">
+                        <tr>
+                            <th class="table-urail"></th>
+                            <th class="table-urail">RN1</th>
+                            <th class="table-urail">RN2</th>
+                            <th class="table-urail">RN3</th>
+                            <th class="table-urail">RN4</th>
+                            <th class="table-urail">RN5</th>
+                            <th class="table-urail">RN6</th>
+                            <th class="table-urail">RN7</th>
+                            <th class="table-urail">RN8</th>
+                            <th class="table-urail">RN11</th>
+                            <th class="table-urail">RN12</th>
+                            <th class="table-urail">RN13</th>
+                            <th class="table-urail">RN14</th>
+                            <th class="table-urail">RN15</th>
+                            <th class="table-urail">RN16</th>
+                            <th class="table-urail">RN17</th>
+                            <th class="table-urail">RN18</th>
+                        </tr>
+                        <tr>
+                            <th>ALV3</th>
+                            {% for rn in rn_values %}
+                            <td class="table-urail affnend">
+                                {{ results['ALV3 ' ~ rn] if 'ALV3 ' ~ rn in results else 0 }}
+                                <span class="ne-nd-data">
+                                    {{ data['ALV3 ' ~ rn] if 'ALV3 ' ~ rn in data else '' }}
+                                </span> 
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <th>ALV4</th>
+                            {% for rn in rn_values %}
+                            <td class="table-urail affnend">
+                                {{ results['ALV4 ' ~ rn] if 'ALV4 ' ~ rn in results else 0 }}
+                                <span class="ne-nd-data">
+                                    {{ data['ALV4 ' ~ rn] if 'ALV4 ' ~ rn in data else '' }}
+                                </span> 
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <th>ALV5</th>
+                            {% for rn in rn_values %}
+                            <td class="table-urail affnend">                          
+                                {{ results['ALV5 ' ~ rn] if 'ALV5 ' ~ rn in results else 0 }}
+                                <span class="ne-nd-data">
+                                    {{ data['ALV5 ' ~ rn] if 'ALV5 ' ~ rn in data else '' }}
+                                </span> 
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <th>ALV6</th>
+                            {% for rn in rn_values %}
+                            <td class="table-urail affnend"> 
+                                {{ results['ALV6 ' ~ rn] if 'ALV6 ' ~ rn in results else 0 }}
+                                <span class="ne-nd-data">
+                                    {{ data['ALV6 ' ~ rn] if 'ALV6 ' ~ rn in data else '' }}
+                                </span>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </table> 
+                    {% elif model == 'CSE' %} 
+                        {%set rn_values = ["RN6", "RN13", "RN20", "RN27", "RN35", "RN42", "RN49", "RN56","RN64", "RN71", "RN78", "RN85", "RN93", "RN100", "RN107", "RN114"]%}
+
+                        <h2>Résultats</h2>
+                        <table id="result-table" class="table-urail">
+                            <tr>
+                                <th class="table-urail"></th>
+                                <th class="table-urail">RN6</th>
+                                <th class="table-urail">RN13</th>
+                                <th class="table-urail">RN20</th>
+                                <th class="table-urail">RN27</th>
+                                <th class="table-urail">RN35</th>
+                                <th class="table-urail">RN42</th>
+                                <th class="table-urail">RN49</th>
+                                <th class="table-urail">RN56</th>
+                                <th class="table-urail">RN64</th>
+                                <th class="table-urail">RN71</th>
+                                <th class="table-urail">RN78</th>
+                                <th class="table-urail">RN85</th>
+                                <th class="table-urail">RN93</th>
+                                <th class="table-urail">RN100</th>
+                                <th class="table-urail">RN107</th>
+                                <th class="table-urail">RN114</th>
+                            </tr>
+                            <tr>
+                                <th>ALV2</th>
+                                {% for rn in rn_values %}
+                                <td class="table-urail affnend">
+                                    {{ results['ALV2 ' ~ rn] if 'ALV2 ' ~ rn in results else 0 }}
+                                    <span class="ne-nd-data">
+                                        {{ data['ALV2 ' ~ rn] if 'ALV2 ' ~ rn in data else '' }}
+                                    </span> 
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <th>ALV3</th>
+                                {% for rn in rn_values %}
+                                <td class="table-urail affnend">
+                                    {{ results['ALV3 ' ~ rn] if 'ALV3 ' ~ rn in results else 0 }}
+                                    <span class="ne-nd-data">
+                                        {{ data['ALV3 ' ~ rn] if 'ALV3 ' ~ rn in data else '' }}
+                                    </span> 
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <th>ALV7</th>
+                                {% for rn in rn_values %}
+                                <td class="table-urail affnend">                          
+                                    {{ results['ALV7 ' ~ rn] if 'ALV7 ' ~ rn in results else 0 }}
+                                    <span class="ne-nd-data">
+                                        {{ data['ALV7 ' ~ rn] if 'ALV7 ' ~ rn in data else '' }}
+                                    </span> 
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <th>ALV8</th>
+                                {% for rn in rn_values %}
+                                <td class="table-urail affnend"> 
+                                    {{ results['ALV8 ' ~ rn] if 'ALV8 ' ~ rn in results else 0 }}
+                                    <span class="ne-nd-data">
+                                        {{ data['ALV8 ' ~ rn] if 'ALV8 ' ~ rn in data else '' }}
+                                    </span>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table> 
+                    {% endif %}   
+                {% endif %}
+  
+        </main>
+    </body>
+
+    <script>
+        // Attend que le document soit complètement chargé
+        document.addEventListener("DOMContentLoaded", function () {
+          // Récupère toutes les cellules du tableau qui ont des nombres
+          var cells = document.querySelectorAll("#result-table td");
+          
+          // Parcours toutes les cellules
+          cells.forEach(function (cell) {
+            var cellValue = parseInt(cell.innerHTML);
+            if (!isNaN(cellValue) && cellValue > 0) {
+              // Si la valeur de la cellule est supérieure à 0, colorez-la en vert
+              cell.style.backgroundColor = "rgb(18 181 18 / 81%)";
+            }
+          });
+        });
+
+        // Attend que le document soit complètement chargé
+        document.addEventListener("DOMContentLoaded", function () {
+            // Récupère toutes les cellules du tableau qui ont des nombres
+            var cells = document.querySelectorAll("#result-table td");
+
+            // Parcours toutes les cellules
+            cells.forEach(function (cell) {
+            // Vérifie s'il y a déjà un gestionnaire d'événements de clic
+            if (!cell.hasClickEvent) {
+                // Ajoute un gestionnaire d'événements de clic à chaque cellule
+                cell.addEventListener("click", function () {
+                // Récupère le contenu du span dans la cellule
+                var spanContent = cell.querySelector(".ne-nd-data").textContent;
+
+                // Crée un élément textarea temporaire pour copier le texte
+                var tempTextarea = document.createElement("textarea");
+                tempTextarea.value = spanContent;
+
+                // Ajoute l'élément textarea temporaire au corps du document
+                document.body.appendChild(tempTextarea);
+
+                // Sélectionne le texte dans l'élément textarea
+                tempTextarea.select();
+                tempTextarea.setSelectionRange(0, 99999); // Pour la compatibilité mobile
+
+                // Copie le texte sélectionné dans le presse-papiers
+                document.execCommand("copy");
+
+                // Supprime l'élément textarea temporaire
+                document.body.removeChild(tempTextarea);
+
+                // Affiche une confirmation (facultatif)
+                alert("Contenu copié dans le presse-papiers : " + spanContent);
+                });
+
+                // Marque la cellule comme ayant un gestionnaire d'événements
+                cell.hasClickEvent = true;
+            }
+            });
+        });
+
+      </script>
+    
+</html>
