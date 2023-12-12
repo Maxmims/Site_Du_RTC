@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_from_directory , url_for
 from collections import defaultdict
 import re
 import json
+from bs4 import BeautifulSoup
 
 
 
@@ -57,6 +58,47 @@ valeurs_ut = [
 
 def remove_leading_zeros(s):
     return re.sub(r'^0+', '', s)
+
+def mettre_en_forme_html(texte):
+    soup = BeautifulSoup('', 'html.parser')
+    pre = soup.new_tag('pre')  # Utiliser une balise <pre> pour conserver la mise en forme du texte
+
+    for ligne in texte.split('\n'):
+        div = soup.new_tag('div')
+
+        if ligne.startswith('QMCIL'):
+            # Appliquer le style uniquement à la partie après 'QMCIL:'
+            partie_avant_qmcil, partie_apres_qmcil = ligne.split('QMCIL:', 1)
+            span = soup.new_tag('span', style='font-weight: bold;')
+            span.string = 'QMCIL:' + partie_apres_qmcil
+            div.append(partie_avant_qmcil)
+            div.append(span)
+        elif 'AMET =' in ligne:
+            # Appliquer le style uniquement à la partie après 'AMET ='
+            partie_avant_amet, partie_apres_amet = ligne.split('AMET =', 1)
+            span = soup.new_tag('span', style='font-weight: bold; color: blue;')
+            span.string = 'AMET =' + partie_apres_amet
+            div.append(partie_avant_amet)
+            div.append(span)
+        elif 'ETAT =' in ligne:
+            # Appliquer le style uniquement à la partie après 'ETAT ='
+            partie_avant_etat, partie_apres_etat = ligne.split('ETAT =', 1)
+            span = soup.new_tag('span', style='font-weight: bold; color: blue;')
+            span.string = 'ETAT =' + partie_apres_etat
+            div.append(partie_avant_etat)
+            div.append(span)
+        elif 'AFLR =' in ligne:
+            # Appliquer le style uniquement à la partie après 'AFLR ='
+            partie_avant_aflr, partie_apres_aflr = ligne.split('AFLR =', 1)
+            span = soup.new_tag('span', style='font-weight: bold; color: blue;')
+            span.string = 'AFLR =' + partie_apres_aflr
+            div.append(partie_avant_aflr)
+            div.append(span)
+        else:
+            div.string = ligne
+        pre.append(div)
+
+    return str(soup)
 
 def extract_codes(text, prefix):
     # Find the part of the text after the prefix
@@ -154,6 +196,10 @@ def Anoil():
 @app.route('/Urail')
 def Urail():
     return render_template('Urail.html')
+
+@app.route('/MEP')
+def MEP():
+    return render_template('MEP.html')
 
 
 
@@ -786,6 +832,24 @@ def executer_Urail():
             formatted_data[key] = ' '.join(value)
               
     return render_template('Urail.html', results = results, data = formatted_data, model = current_model) 
+
+@app.route('/MEP', methods=['POST'])
+def executer_programme_MEP():
+    if request.method == 'POST':
+        lignes = request.form.get('text').split('\n')
+        nouvelles_lignes = []
+        prefixes_a_exclure = ['CEN=','LIGNE', '** INTER', 'Une demande', 'R1821', 'TRAITEMENT','DEBUT', '*   #','*    #R1421']
+
+        for ligne in lignes:
+            ligne = ligne.strip()
+            if not any(ligne.startswith(prefix) for prefix in prefixes_a_exclure) and ligne:
+                nouvelles_lignes.append(ligne)
+
+        resultat = '\n'.join(nouvelles_lignes)
+        resultat_html = mettre_en_forme_html(resultat)
+
+    return render_template('MEP.html', resultat=resultat)
+
 
 
 if __name__ == '__main__':

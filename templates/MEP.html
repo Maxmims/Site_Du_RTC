@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+    <title>Mise en Page PEC</title> 
+</head>
+<body class='special-page'>
+    <div id="header">
+            <a href="/"  class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">   
+        </a>
+        <h1>Mise en Page PEC</h1>
+    </div>
+
+    <main>
+        <div class="box">
+            <form action="/MEP" method="POST">
+                <textarea name="text" id="myTextarea" class="customTextarea" placeholder="Collez votre texte ici..." required=""></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>
+        </div>
+        {% if resultat is defined %}
+        <pre class="policeMEP" id="formattedText">{{ resultat|safe }}</pre>
+        <input type="submit" class="btn btn-primary" id="copierval" value="Copier">
+        {% endif %}
+
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var pre = document.querySelector('pre');
+            
+            if (pre) {
+                var lines = pre.innerHTML.split('\n');
+        
+                // Liste des préfixes à traiter de manière spécifique
+                var prefixesSpecifiques = [
+                    { prefix: 'AMET =', regex: /AMET = ([^\s]+)/ },
+                    { prefix: 'ETMND =', regex: /ETMND = ([^\s]+)/ },
+                    { prefix: 'ETAT =', regex: /ETAT = ([^\s]+)/ }, 
+                    { prefix: 'BASC =', regex: /BASC = ([^\s]+)/ },
+                    { prefix: 'AFPIL =', regex: /AFPIL = ([^\s]+)/ },
+                    { prefix: 'AFRES =', regex: /AFRES = ([^\s]+)/ },                 
+                    { prefix: 'AGEO=', regex: /AGEO=([^\s]+)/ },
+                    { prefix: 'AFLR =', regex: /AFLR = ([^\s]+)/ },
+                    { prefix: 'NSAE=', regex: /NSAE=([^\s]+)/ },
+                    { prefix: 'NSGE=', regex: /NSGE=([^\s]+)/ },
+                    { prefix: 'NIND=', regex: /NIND=([^\s]+)/ },
+                    { prefix: 'NCEN=', regex: /NCEN=([^\s]+)/ },
+                    { prefix: 'INDI=', regex: /INDI=([^\s]+)/ },
+                    { prefix: 'NSDT=', regex: /NSDT=([^\s]+)/ },
+                    { prefix: 'TEXAL=', regex: /TEXAL=(.+)/ },
+                    { prefix: 'AFCN =', regex: /AFCN =([^\/\s]+)/ },
+                    { prefix: 'AFUR =', regex: /AFUR =([^\/\s]+)/ },
+                    { prefix: 'AGEO=', regex: /AGEO=([^\/\s]+ [^\s]+)/ },
+                    { prefix: 'NE=', regex: /NE=([^\s]+)/ },
+                    { prefix: 'L1=    ', regex: /L1=    ([^\s]+)/ },
+                    { prefix: 'L2=    ', regex: /L2=    ([^\s]+)/ },
+                    { prefix: 'L3=    ', regex: /L3=    ([^\s]+)/ },
+                    { prefix: 'L4=    ', regex: /L4=    ([^\s]+)/ },
+                    { prefix: 'L5>', regex: /L5>([^\s]+)/ },
+                    { prefix: 'L6> ', regex: /L6> ([^\s]+)/ },
+                    { prefix: 'L7>', regex: /L7>([^\s]+)/ },
+                    { prefix: 'EVENT=', regex: /EVENT=([^\s]+)/ },
+                    { prefix: 'L8=    ', regex: /L8=    ([^\s]+)/ },
+                    { prefix: 'NE   =', regex: /NE   =([^\s]+)/ },
+                    { prefix: 'ND=', regex: /ND=([^\s]+)/ },
+                    { prefix: 'AM=', regex: /AM=([^\s]+)/ },
+                    { prefix: 'GLRX=', regex: /GLRX=([^\s]+)/ },
+                    { prefix: 'BRCX=', regex: /BRCX=([^\s]+)/ },
+                    { prefix: 'ETAT=', regex: /ETAT=([^\s]+)/ },
+                    { prefix: 'AFGRX=', regex: /AFGRX=([^\s]+)/ },
+                    { prefix: 'AFGRT=', regex: /AFGRT=([^\s]+)/ },
+                    { prefix: 'TR=', regex: /TR=([^\s]+)/ },
+                    { prefix: 'AG=', regex: /AG=([^\s]+)/ },
+                    { prefix: 'NCA=', regex: /NCA=([^\s]+)/ },
+                    { prefix: 'AFGRA=', regex: /AFGRA=([^\s]+)/ }
+
+                    
+                ];
+
+                var prefixesCasParticuliers = [
+                    
+                    // Ajoutez d'autres préfixes au besoin
+                ];
+        
+                // Liste des préfixes à traiter de la même manière
+                var prefixesGeneriques = ['QMCIL:','ARCIN','GLRIL','URTL', 'ABFASE:', 'TELINB:','TELIN','ALAIL','ESAB:'];
+        
+                // Liste des préfixes à coloriser en vert
+                var prefixesVert = ['/DIAG','LA MISE','LE REMPLACEMENT',':','REMPLACEMENT ','XMCB','FIN  TEST', '/NIV', 'PANNE','SOUPC','LE TEST'];
+        
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+        
+                    // Vérifier si la ligne commence par un des préfixes à coloriser en vert
+                    var isVertPrefix = prefixesVert.some(function (vertPrefix) {
+                        return line.startsWith(vertPrefix);
+                    });
+        
+                    // Si oui, appliquer le style vert
+                    if (isVertPrefix) {
+                        lines[i] = `<span style="font-weight: bold; color: rgb(0 187 16);">${line}</span>`;
+                        continue; // Passer à la ligne suivante
+                    }
+        
+                    // Vérifier si la ligne contient l'un des préfixes spécifiques
+                    var isSpecificPrefix = prefixesSpecifiques.some(function (specificPrefix) {
+                        return line.includes(specificPrefix.prefix);
+                    });
+        
+                    // Vérifier si la ligne contient l'un des préfixes génériques
+                    var isGenericPrefix = prefixesGeneriques.some(function (genericPrefix) {
+                        return line.includes(genericPrefix);
+                    });
+        
+                    // Appliquer le style aux préfixes spécifiques
+                    for (var k = 0; k < prefixesSpecifiques.length; k++) {
+                        var specificPrefix = prefixesSpecifiques[k].prefix;
+                        var regex = prefixesSpecifiques[k].regex;
+        
+                        lines[i] = lines[i].replace(regex, `${specificPrefix} <span style="font-weight: bold; color: blue;">$1</span>`);
+                    }
+        
+                    // Appliquer le style aux préfixes génériques
+                    for (var k = 0; k < prefixesGeneriques.length; k++) {
+                        var genericPrefix = prefixesGeneriques[k];
+        
+                        if (line.includes(genericPrefix)) {
+                            var [partieAvant, partieApres] = lines[i].split(genericPrefix);
+                            lines[i] = partieAvant + `<span style="font-weight: bold; color: rgb(80, 132, 245)">${genericPrefix}${partieApres}</span>`;
+                        }
+                    }
+                    // Appliquer un style différent pour les cas particuliers
+                    
+                }
+                pre.innerHTML = lines.join('\n');
+                
+                var clipboard = new ClipboardJS('#copierval', {
+                    text: function () {
+                        // Créer un élément de texte temporaire
+                        var tempTextArea = document.createElement('textarea');
+                        tempTextArea.value = pre.innerText;
+    
+                        // Ajouter l'élément texte temporaire au DOM
+                        document.body.appendChild(tempTextArea);
+    
+                        // Sélectionner et copier le contenu
+                        tempTextArea.select();
+                        document.execCommand('copy');
+    
+                        // Retirer l'élément texte temporaire du DOM
+                        document.body.removeChild(tempTextArea);
+    
+                        return pre.innerText;
+                    }
+                });
+    
+                clipboard.on('success', function (e) {
+                    alert('Texte copié dans le presse-papiers avec mise en forme !');
+                    e.clearSelection();
+                });
+    
+                clipboard.on('error', function (e) {
+                    console.error('Erreur lors de la copie dans le presse-papiers : ', e);
+                    alert('Erreur lors de la copie dans le presse-papiers.');
+                });
+            }
+        });
+
+            
+    </script>
+    
+</body>
+</html>

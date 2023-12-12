@@ -15,6 +15,7 @@
     font-family: 'MaPolice-regular', sans-serif;
     display: flex;
     align-items: center;
+
 }
 
 .Accueil-lien img {
@@ -93,6 +94,7 @@ main {
 }
 .home {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -508,7 +510,7 @@ td {
 .masquer-bordure-superieure-inferieure {
     border-top: none !important;
     border-bottom: none !important;
-    border:6px solid black;
+    border:6px solid rgb(0, 0, 0);
 }
 
 /* Classe pour masquer la bordure supérieure */
@@ -520,7 +522,7 @@ td {
 td[data-tooltip]:hover:after {
     content: attr(data-tooltip);
     background-color: rgba(0, 0, 0, 0.7);
-    color: white;
+    color: rgb(80, 132, 245);
     padding: 5px;
     border-radius: 5px;
     position: absolute;
@@ -544,6 +546,10 @@ td[data-tooltip]:hover:after {
     padding: 5px;
     white-space: normal; /* Ajoutez cette ligne pour permettre le passage à la ligne automatique */
 }
+.policeMEP {
+    font-family: 'MaPolice-regular', sans-serif;
+    font-size:1.2rem;
+}
 
 /* Styles supplémentaires pour rendre les rectangles responsifs */
 @media screen and (max-width: 768px) {
@@ -557,3 +563,4 @@ td[data-tooltip]:hover:after {
       margin-right: 2px; /* Réduit davantage l'espace entre les rectangles sur les écrans encore plus petits */
     }
 }
+
