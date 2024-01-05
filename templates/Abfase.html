@@ -69,7 +69,7 @@
                 </thead>
                 <tbody>
                   {% for item in result %}
-                  <tr class="encadre-line">
+                  <tr>
                     <td class="no-padding-table">{{ item['NE'] }}</td>
                     <td class="no-padding-table">{{ item['CN'] }}</td>
                     <td class="no-padding-table">{{ item['Rainures'] }}</td>
@@ -95,11 +95,21 @@
             let previousCCC = null; // Stocke la valeur CCC (120) de la ligne précédente
 
             rows.forEach((row, index) => {
-                // Ajouter la classe "encadre-ligne" à toutes les lignes par défaut
-                row.classList.add('masquer-bordure-inferieure');
-
                 if (index === 0) {
-                    // Ignore la première ligne (en-têtes de colonnes)
+                    // Ajouter systématiquement la classe "masquer-bordure-inferieure" à la première ligne
+                    row.classList.add('masquer-bordure-inferieure');
+
+                    // Initialiser previousCC et previousCCC avec les valeurs de la première ligne
+                    const cellsFirstRow = row.querySelectorAll('td');
+                    if (cellsFirstRow.length >= 1) {
+                        const firstRowNE = cellsFirstRow[0].textContent.trim();
+                        const matchFirstRow = firstRowNE.match(/NE\s*=\s*(\d+)-(\d+)-(\d+)/);
+                        if (matchFirstRow) {
+                            previousCC = parseInt(matchFirstRow[2]);
+                            previousCCC = parseInt(matchFirstRow[3]);
+                        }
+                    }
+                    
                     return;
                 }
 
@@ -119,16 +129,16 @@
                             previousCC !== null && previousCC === currentCC &&
                             previousCCC !== null && isInRange(previousCCC, currentCCC)
                         ) {
-                            // Retirer la classe "encadre-ligne" et ajouter les classes de masquage appropriées
-                            row.classList.remove('encadre-ligne');
+                            // Ajouter directement les classes de masquage appropriées
                             row.classList.add('masquer-bordure-superieure');
                             if (index > 1) {
-                                // Retirer la classe "encadre-ligne" de la ligne précédente
+                                // Ajouter directement la classe de masquage appropriée à la ligne précédente
                                 const previousRow = rows[index - 1];
-                                previousRow.classList.remove('encadre-ligne');
-                                // Ajouter la classe de masquage appropriée à la ligne précédente
                                 previousRow.classList.add('masquer-bordure-inferieure');
                             }
+                        } else {
+                            // Ajouter systématiquement la classe "masquer-bordure-inferieure" à toutes les autres lignes
+                            row.classList.add('masquer-bordure-inferieure');
                         }
 
                         // Mettre à jour les valeurs précédentes
@@ -137,6 +147,8 @@
                     }
                 }
             });
+
+            
             
             // Fonction pour vérifier si CCC est dans la même plage que CCC précédent
             function isInRange(previousCCC, currentCCC) {

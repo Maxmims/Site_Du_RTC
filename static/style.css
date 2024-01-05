@@ -33,6 +33,10 @@ a {
     margin: 8px;
 }
 
+pre {
+    background-color: inherit; /* Empêche la copie du fond */
+}
+
 h1{
     margin: 0;
     font-size: 32px;
@@ -269,6 +273,7 @@ input[type="text"]:focus, textarea:focus {
 }
 
 
+
 .rectangle span {
     text-transform: uppercase;
     font-family: 'MaPolice-BoldRegular';
@@ -495,27 +500,17 @@ td {
     transform: scale(1.4); /* Zoom de 110% */
     transition: transform 0.3s ease; /* Transition douce de l'échelle */
 }
-/* Classe pour encadrer les lignes du tableau */
-.encadre-ligne {
-    border: 3px solid #776969; /* Bordure de 2 pixels de large en noir */
-}
+
 /* Classe pour masquer la bordure inférieure */
 .masquer-bordure-inferieure {
-    border: 3px solid #776969;
+    border: 5px solid #776969;
     border-bottom: none !important;
     
 }
 
-/* Classe pour masquer la bordure supérieure et inférieure */
-.masquer-bordure-superieure-inferieure {
-    border-top: none !important;
-    border-bottom: none !important;
-    border:6px solid rgb(0, 0, 0);
-}
-
 /* Classe pour masquer la bordure supérieure */
 .masquer-bordure-superieure {
-    border: 3px solid #776969;
+    border: 5px solid #776969;
     border-top: none !important;
 }
 

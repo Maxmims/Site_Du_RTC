@@ -33,18 +33,22 @@
             var pre = document.querySelector('pre');
             
             if (pre) {
-                var lines = pre.innerHTML.split('\n');
+                var lines = pre.innerText.split('\n');
         
                 // Liste des préfixes à traiter de manière spécifique
                 var prefixesSpecifiques = [
+                    { prefix: '*A0628/', regex: /\*A0628\/(\d+)/ },
+                    { prefix: '!! *A0628/', regex: /!! \*A0628\/(\d+)/ },
+                    { prefix: '!!! *A0628/', regex: /!!! \*A0628\/(\d+)/ },
                     { prefix: 'AMET =', regex: /AMET = ([^\s]+)/ },
                     { prefix: 'ETMND =', regex: /ETMND = ([^\s]+)/ },
-                    { prefix: 'ETAT =', regex: /ETAT = ([^\s]+)/ }, 
+                    { prefix: 'ETAT =', regex: /ETAT =\s*([^\s]+)/ },
+                    { prefix: 'ETAT=', regex: /ETAT=([^\s]+)/ }, 
                     { prefix: 'BASC =', regex: /BASC = ([^\s]+)/ },
                     { prefix: 'AFPIL =', regex: /AFPIL = ([^\s]+)/ },
-                    { prefix: 'AFRES =', regex: /AFRES = ([^\s]+)/ },                 
-                    { prefix: 'AGEO=', regex: /AGEO=([^\s]+)/ },
+                    { prefix: 'AFRES =', regex: /AFRES = ([^\s]+)/ },                                     
                     { prefix: 'AFLR =', regex: /AFLR = ([^\s]+)/ },
+                    { prefix: 'AFLR=', regex: /AFLR=([^<\s]+)/ },
                     { prefix: 'NSAE=', regex: /NSAE=([^\s]+)/ },
                     { prefix: 'NSGE=', regex: /NSGE=([^\s]+)/ },
                     { prefix: 'NIND=', regex: /NIND=([^\s]+)/ },
@@ -53,90 +57,142 @@
                     { prefix: 'NSDT=', regex: /NSDT=([^\s]+)/ },
                     { prefix: 'TEXAL=', regex: /TEXAL=(.+)/ },
                     { prefix: 'AFCN =', regex: /AFCN =([^\/\s]+)/ },
+                    { prefix: 'AFCT =', regex: /AFCT =\s*([^\s]+)/},
                     { prefix: 'AFUR =', regex: /AFUR =([^\/\s]+)/ },
-                    { prefix: 'AGEO=', regex: /AGEO=([^\/\s]+ [^\s]+)/ },
+                    { prefix: 'AFUR=', regex: /AFUR=([^ ]+)/ },
+                    { prefix: 'AGEO=', regex: /AGEO=([^\/\s]+ [^\s]+|[^\s]+)/ },
                     { prefix: 'NE=', regex: /NE=([^\s]+)/ },
-                    { prefix: 'L1=    ', regex: /L1=    ([^\s]+)/ },
-                    { prefix: 'L2=    ', regex: /L2=    ([^\s]+)/ },
-                    { prefix: 'L3=    ', regex: /L3=    ([^\s]+)/ },
-                    { prefix: 'L4=    ', regex: /L4=    ([^\s]+)/ },
-                    { prefix: 'L5>', regex: /L5>([^\s]+)/ },
-                    { prefix: 'L6> ', regex: /L6> ([^\s]+)/ },
-                    { prefix: 'L7>', regex: /L7>([^\s]+)/ },
+                    { prefix: 'L1=', regex: /L1=\s*([+-]?\s*\d+(\.\d+)?)\s*(?=\b)/ },
+                    { prefix: 'L2=', regex: /L2=\s*([+-]?\s*\d+(\.\d+)?)\s*(?=\b)/ },
+                    { prefix: 'L3=', regex: /L3=\s*([+-]?\s*\d+(\.\d+)?)\s*(?=\b)/ },
+                    { prefix: 'L4=', regex: /L4=\s*([+-]?\s*\d+(\.\d+)?)\s*(?=\b)/ },
+                    { prefix: 'L5>', regex: /L5>\s*([^\s]+)/ },
+                    { prefix: 'L6>', regex: /L6>\s*([^\s]+)/ },
+                    { prefix: 'L7>', regex: /L7>\s*([^\s]+)/ },
                     { prefix: 'EVENT=', regex: /EVENT=([^\s]+)/ },
                     { prefix: 'L8=    ', regex: /L8=    ([^\s]+)/ },
-                    { prefix: 'NE   =', regex: /NE   =([^\s]+)/ },
-                    { prefix: 'ND=', regex: /ND=([^\s]+)/ },
+                    { prefix: 'NE=', regex: /NE\s*=\s*([^<>\s]+)(?:\s*<([^<>\s]+)\s*\+\s*([^<>\s]+)\s*<([^<>\s]+)\s*)?/ },
+                    { prefix: 'UT=', regex: /UT=\s*([^\s]+)/ },
+                    { prefix: 'TFCT=', regex: /TFCT=\s*([^\s]+)/ },                   
+                    { prefix: 'ND=', regex: /ND=\s*([^<\s]+)/ },
                     { prefix: 'AM=', regex: /AM=([^\s]+)/ },
                     { prefix: 'GLRX=', regex: /GLRX=([^\s]+)/ },
                     { prefix: 'BRCX=', regex: /BRCX=([^\s]+)/ },
-                    { prefix: 'ETAT=', regex: /ETAT=([^\s]+)/ },
                     { prefix: 'AFGRX=', regex: /AFGRX=([^\s]+)/ },
                     { prefix: 'AFGRT=', regex: /AFGRT=([^\s]+)/ },
                     { prefix: 'TR=', regex: /TR=([^\s]+)/ },
                     { prefix: 'AG=', regex: /AG=([^\s]+)/ },
                     { prefix: 'NCA=', regex: /NCA=([^\s]+)/ },
-                    { prefix: 'AFGRA=', regex: /AFGRA=([^\s]+)/ }
+                    { prefix: 'NROB=', regex: /NROB=([^\s]+)/ },
+                    { prefix: 'AFCN=', regex: /AFCN=([^\s]+)/ },
+                    { prefix: 'AFCNP=', regex: /AFCNP=([^\s]+)/ },
+                    { prefix: 'TYPCN=', regex: /TYPCN=([^\s]+)/ },
+                    { prefix: 'TY=', regex: /TY=\s*([^\s]+)/ },                    
+                    { prefix: 'NFSM =', regex: /NFSM =\s*([^ ]+)/ },
+                    { prefix: 'NATC =', regex: /NATC =\s*([^<>\s]+)/ },
+                    { prefix: 'TYC =', regex: /TYC =\s*([^<>\s]+)/ },
+                    { prefix: 'NFSC =', regex: /NFSC =\s*([^<>\s]+)/ },
+                    { prefix: 'PS =', regex: /PS =\s*([^ ]+)/ },
+                    { prefix: 'CIC=', regex: /CIC=([^\s]+)/ },
+                    { prefix: 'TYR=', regex: /TYR=([^\s]+)/ },
+                    { prefix: 'TYR =', regex: /TYR =\s*([^ ]+)/ },
+                    { prefix: 'TYPG=', regex: /TYPG=([^ ]+)/ },
+                    { prefix: 'TYPM=', regex: /TYPM='([^']+)'/ },
+                    { prefix: 'AFLRI=', regex: /AFLRI\s*=\s*([^\s]+)/ },
+                    { prefix: 'AFGRA=', regex: /AFGRA=([^\s]+)/ },
+                    { prefix: 'SENS =', regex: /SENS =\s*([^\s]+)/ },
+                    { prefix: 'MOT (003) =', regex: /MOT\s*\(003\)\s*=\s*H'([^']+)'/ }
 
-                    
+  
                 ];
 
-                var prefixesCasParticuliers = [
-                    
-                    // Ajoutez d'autres préfixes au besoin
-                ];
+                var casParticulier = ['INIT+NBLO', 'BLOS','IND','MAL','UR ISOLEE','BLOS(BLOM)','NENG+BLOD+BLOA'];
+
+                var casParticulierpositif = ['QTN','SAIN', 'ES','(TEST)','ACTI+NBLO','FAL'];
         
                 // Liste des préfixes à traiter de la même manière
-                var prefixesGeneriques = ['QMCIL:','ARCIN','GLRIL','URTL', 'ABFASE:', 'TELINB:','TELIN','ALAIL','ESAB:'];
+                var prefixesGeneriques = ['QMCIL:','SMTL','ESMMO','ESMIN','CSMIN','CNIL','ABOIN','TELEMO','ABOMO','ARCIN','URIL','GLRIL','URTL', 'ABFASE:', 'TELINB:','TELIN','ALAIL','ESAB:'];
         
                 // Liste des préfixes à coloriser en vert
-                var prefixesVert = ['/DIAG','LA MISE','LE REMPLACEMENT',':','REMPLACEMENT ','XMCB','FIN  TEST', '/NIV', 'PANNE','SOUPC','LE TEST'];
+                var prefixesVert = ['/DIAG','TEST IMPOSSIBLE','OU EN BLO','PROCEDURE','LA MISE','LE REMPLACEMENT',':','REMPLACEMENT ','XMCB','FIN  TEST', '/NIV', 'PANNE','SOUPC','LE TEST'];
         
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
-        
+                
                     // Vérifier si la ligne commence par un des préfixes à coloriser en vert
                     var isVertPrefix = prefixesVert.some(function (vertPrefix) {
                         return line.startsWith(vertPrefix);
                     });
-        
+                
                     // Si oui, appliquer le style vert
                     if (isVertPrefix) {
                         lines[i] = `<span style="font-weight: bold; color: rgb(0 187 16);">${line}</span>`;
                         continue; // Passer à la ligne suivante
                     }
-        
-                    // Vérifier si la ligne contient l'un des préfixes spécifiques
-                    var isSpecificPrefix = prefixesSpecifiques.some(function (specificPrefix) {
-                        return line.includes(specificPrefix.prefix);
-                    });
-        
-                    // Vérifier si la ligne contient l'un des préfixes génériques
+                
+                    // Vérifier si la ligne contient l'un des préfixes généraux
                     var isGenericPrefix = prefixesGeneriques.some(function (genericPrefix) {
                         return line.includes(genericPrefix);
                     });
-        
-                    // Appliquer le style aux préfixes spécifiques
-                    for (var k = 0; k < prefixesSpecifiques.length; k++) {
-                        var specificPrefix = prefixesSpecifiques[k].prefix;
-                        var regex = prefixesSpecifiques[k].regex;
-        
-                        lines[i] = lines[i].replace(regex, `${specificPrefix} <span style="font-weight: bold; color: blue;">$1</span>`);
+
+                    var dateMatch = line.match(/\/(\d{2}-\d{2}-\d{2}\/\d{2} H \d{2})\//);
+                    if (dateMatch) {
+                        // Extraire la date capturée
+                        var capturedDate = dateMatch[1];
+
+                        // Remplacer la date dans la ligne avec la version colorisée en vert
+                        lines[i] = line.replace(/\/(\d{2}-\d{2}-\d{2}\/\d{2} H \d{2})\//g, `<span style="font-weight: bold; color: rgb(0 187 16)">/${capturedDate}/</span>`);
                     }
-        
-                    // Appliquer le style aux préfixes génériques
-                    for (var k = 0; k < prefixesGeneriques.length; k++) {
-                        var genericPrefix = prefixesGeneriques[k];
-        
-                        if (line.includes(genericPrefix)) {
-                            var [partieAvant, partieApres] = lines[i].split(genericPrefix);
-                            lines[i] = partieAvant + `<span style="font-weight: bold; color: rgb(80, 132, 245)">${genericPrefix}${partieApres}</span>`;
+                
+                    // Vérifier si la ligne contient ACTI+NBLO
+                    if (line.includes('ACTI+NBLO')) {
+                        lines[i] = line.replace(/(ACTI\+NBLO)/g, '<span style="font-weight: bold; color: rgb(0 187 16);">$1</span>');
+                    } else if (line.includes('INIT+NBLO')) {
+                        lines[i] = line.replace(/(INIT\+NBLO)/g, '<span style="font-weight: bold; color: red;">$1</span>');
+                    } else {
+                        if (!isGenericPrefix) {
+                            // Appliquer le style aux préfixes spécifiques
+                            for (var k = 0; k < prefixesSpecifiques.length; k++) {
+                                var specificPrefix = prefixesSpecifiques[k].prefix;
+                                var regex = prefixesSpecifiques[k].regex;
+
+                                // Vérifier si la ligne contient le préfixe spécifique
+                                if (line.includes(specificPrefix)) {
+                                    // Capturer la valeur avec l'expression régulière
+                                    var captureResult = line.match(regex);
+
+                                    if (captureResult) {
+                                        // Extraire la valeur capturée
+                                        var capturedValue = captureResult[1];
+
+                                        // Vérifier si la valeur capturée est dans casParticulier
+                                        if (casParticulier.includes(capturedValue)) {
+                                            lines[i] = lines[i].replace(regex, `${specificPrefix} <span style="font-weight: bold; color: red;">${capturedValue}</span>`);
+                                        } else if (casParticulierpositif.includes(capturedValue)) {
+                                            lines[i] = lines[i].replace(regex, `${specificPrefix} <span style="font-weight: bold; color: green;">${capturedValue}</span>`);
+                                        } else {
+                                            lines[i] = lines[i].replace(regex, `${specificPrefix} <span style="font-weight: bold; color: blue;">${capturedValue}</span>`);
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Appliquer le style aux préfixes génériques
+                            for (var k = 0; k < prefixesGeneriques.length; k++) {
+                                var genericPrefix = prefixesGeneriques[k];
+                    
+                                if (line.includes(genericPrefix)) {
+                                    var [partieAvant, partieApres] = lines[i].split(genericPrefix);
+                                    lines[i] = partieAvant + `<span style="font-weight: bold; color: rgb(80, 132, 245)">${genericPrefix}${partieApres}</span>`;
+                                }
+                            }
                         }
                     }
-                    // Appliquer un style différent pour les cas particuliers
+                    // Vérifier si la ligne contient la date au format /AA-MM-JJ/hh H mm/
                     
                 }
                 pre.innerHTML = lines.join('\n');
+        
                 
                 var clipboard = new ClipboardJS('#copierval', {
                     text: function () {

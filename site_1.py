@@ -838,7 +838,7 @@ def executer_programme_MEP():
     if request.method == 'POST':
         lignes = request.form.get('text').split('\n')
         nouvelles_lignes = []
-        prefixes_a_exclure = ['CEN=','LIGNE', '** INTER', 'Une demande', 'R1821', 'TRAITEMENT','DEBUT', '*   #','*    #R1421']
+        prefixes_a_exclure = ['CEN=','LIGNE','PH=FIN','#R3000','*   *R0410/', '** INTER', 'Une demande', 'R1821', 'TRAITEMENT','DEBUT', '*   #','*    #R1421']
 
         for ligne in lignes:
             ligne = ligne.strip()
