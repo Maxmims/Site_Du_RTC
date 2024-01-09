@@ -1,0 +1,115 @@
+[
+  {
+    "AB17": {
+      "aflr": "184-003",
+      "extremite": "RT96G",
+      "cirdem": "OUI"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "187-009",
+      "extremite": "RT96G",
+      "cirdem": "OUI"
+    }
+  },
+
+  {
+    "AB17": {
+      "aflr": "187-017",
+      "extremite": "XJ37G",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "192-004",
+      "extremite": "YK061",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "199-011",
+      "extremite": "XJ37G",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "200-002",
+      "extremite": "XJ37G",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "206-007",
+      "extremite": "MPNA0",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "207-000",
+      "extremite": "FMN01",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "207-004",
+      "extremite": "YK031",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "208-004",
+      "extremite": "YK051",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "209-009",
+      "extremite": "RT96G",
+      "cirdem": "OUI"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "215-013",
+      "extremite": "RT96G",
+      "cirdem": "OUI"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "215-036",
+      "extremite": "XJ37G",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "216-002",
+      "extremite": "YK031",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "216-005",
+      "extremite": "YK061",
+      "cirdem": "NON"
+    }
+  },
+  {
+    "AB17": {
+      "aflr": "218-004",
+      "extremite": "YK051",
+      "cirdem": "NON"
+    }
+  }
+]
