@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.8.0/clipboard-polyfill.promise.js"></script>
+
     <title>Mise en Page PEC</title> 
 </head>
 <body class='special-page'>
@@ -114,7 +116,7 @@
                 var prefixesGeneriques = ['QMCIL:','SMTL','ESMMO','ESMIN','CSMIN','CNIL','ABOIN','TELEMO','ABOMO','ARCIN','URIL','GLRIL','URTL', 'ABFASE:', 'TELINB:','TELIN','ALAIL','ESAB:'];
         
                 // Liste des préfixes à coloriser en vert
-                var prefixesVert = ['/DIAG','TEST IMPOSSIBLE','OU EN BLO','PROCEDURE','LA MISE','LE REMPLACEMENT',':','REMPLACEMENT ','XMCB','FIN  TEST', '/NIV', 'PANNE','SOUPC','LE TEST'];
+                var prefixesVert = ['/DIAG','FIN D','MODULE','TEST IMPOSSIBLE','OU EN BLO','PROCEDURE','LA MISE','LE REMPLACEMENT',':','REMPLACEMENT ','XMCB','FIN  TEST', '/NIV', 'PANNE','SOUPC','LE TEST'];
         
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
@@ -191,41 +193,35 @@
                     // Vérifier si la ligne contient la date au format /AA-MM-JJ/hh H mm/
                     
                 }
-                pre.innerHTML = lines.join('\n');
-        
-                
-                var clipboard = new ClipboardJS('#copierval', {
-                    text: function () {
-                        // Créer un élément de texte temporaire
-                        var tempTextArea = document.createElement('textarea');
-                        tempTextArea.value = pre.innerText;
-    
-                        // Ajouter l'élément texte temporaire au DOM
-                        document.body.appendChild(tempTextArea);
-    
-                        // Sélectionner et copier le contenu
-                        tempTextArea.select();
-                        document.execCommand('copy');
-    
-                        // Retirer l'élément texte temporaire du DOM
-                        document.body.removeChild(tempTextArea);
-    
-                        return pre.innerText;
-                    }
-                });
-    
-                clipboard.on('success', function (e) {
-                    alert('Texte copié dans le presse-papiers avec mise en forme !');
-                    e.clearSelection();
-                });
-    
-                clipboard.on('error', function (e) {
-                    console.error('Erreur lors de la copie dans le presse-papiers : ', e);
-                    alert('Erreur lors de la copie dans le presse-papiers.');
-                });
+                pre.innerHTML = lines.join('\n');   
             }
+            
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            var clipboardButton = document.getElementById('copierval');
+        
+            clipboardButton.addEventListener('click', function () {
+                var pre = document.querySelector('pre');
+        
+                if (pre) {
+                    // Sélectionner tout le texte dans le pre
+                    var selection = window.getSelection();
+                    var range = document.createRange();
+                    range.selectNodeContents(pre);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+        
+                    // Copier le texte sélectionné dans le presse-papiers
+                    document.execCommand('copy');
+        
+                    // Retirer la sélection pour éviter de perturber l'interface utilisateur
+                    selection.removeAllRanges();
+        
+                    alert('Texte copié dans le presse-papiers avec mise en forme !');
+                }
+            });
+        });
             
     </script>
     

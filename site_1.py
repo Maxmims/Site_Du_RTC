@@ -201,6 +201,10 @@ def Urail():
 def MEP():
     return render_template('MEP.html')
 
+@app.route('/MICFSC')
+def MICFSC():
+    return render_template('MICFSC.html')
+
 
 
 @app.route('/Fetut', methods=['POST'])
@@ -850,6 +854,31 @@ def executer_programme_MEP():
 
     return render_template('MEP.html', resultat=resultat)
 
+@app.route('/MICFSC', methods=['POST'])
+def executer_programme_MICFSC():
+    # Récupérer les données POST depuis la textarea
+    sgtqs_input = request.form.get('text')
+
+    # Convertir le code SGTQS en majuscules
+    sgtqs_input_upper = sgtqs_input.upper()
+
+    # Charger les données depuis le fichier JSON
+    with open('templates/data/Micfaisceaux.json', 'r', encoding='utf-8') as MIC_fsc_file:
+        mic_fsc = json.load(MIC_fsc_file)
+
+    # Vérifier si le code SGTQS est présent dans le JSON
+    if any(sgtqs_input_upper in entry for entry in mic_fsc):
+        # Rechercher les correspondances pour SGTQS
+        matching_entries = [entry[sgtqs_input_upper] for entry in mic_fsc if sgtqs_input_upper in entry]
+
+        # Trier les entrées par ordre alphabétique en fonction de "Extremite"
+        matching_entries = sorted(matching_entries, key=lambda x: x.get('extremite', '').lower())
+
+        # Renvoyer les résultats triés à la page HTML
+        return render_template('MICFSC.html', matching_entries=matching_entries, sgtqs_input=sgtqs_input_upper)
+    else:
+        # Renvoyer un message d'erreur à la page HTML
+        return render_template('MICFSC.html', error_message="Code SGTQS non trouvé. Veuillez réessayer.", sgtqs_input=sgtqs_input_upper)
 
 
 if __name__ == '__main__':

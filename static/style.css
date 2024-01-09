@@ -170,6 +170,29 @@ textarea {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
+
+textarea.customTextearea {
+    /* Utilisez le sélecteur plus spécifique pour assurer que ces styles prévalent */
+    width: 45px;
+    height: 20px;
+    padding: 0.375rem 0.75rem;
+    border: none;
+    resize: none;
+    border-radius: 15px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(24, 23, 23);
+    font-size: 16px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.15s ease-in-out;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+textarea.customTextearea:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 textarea:focus {
     outline: none;
     border-color: rgba(0, 0, 0, 0.2);
@@ -436,6 +459,13 @@ table, th, td {
     user-select: none;
 }
 
+table.select {
+    user-select:auto;
+}
+table.select td {
+    cursor: pointer;
+}
+
 th {
     background-color: lightgray;
     color: #333;
@@ -499,6 +529,17 @@ td {
 .zoomable:hover {
     transform: scale(1.4); /* Zoom de 110% */
     transition: transform 0.3s ease; /* Transition douce de l'échelle */
+}
+
+.zoom2able {
+    transition: transform 0.2s;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.zoom2able:hover {
+    transform: scale(1.1);
 }
 
 /* Classe pour masquer la bordure inférieure */

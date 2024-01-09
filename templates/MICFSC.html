@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>           
+        /* Largeur des colonnes */
+        th:first-child,
+        td:first-child {
+            width: 10%; 
+        }
+        
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 10%; 
+        }
+
+        th:nth-child(3),
+        td:nth-child(3){
+            width: 10%; 
+        }
+        
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 15%; 
+        }
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 25%; 
+        }
+        th:nth-child(6),
+        td:nth-child(6) {
+            width: 15%; 
+        }
+        th:nth-child(7),
+        td:nth-child(7) {
+            width: 15%; 
+        }
+
+    </style>
+    <title>Mic FAisceaux</title> 
+</head>
+<body class='special-page'>
+    <div id="header">
+        <a href="/" class="Accueil-lien">
+            <img src="static/images/maison.png" alt="Accueil">   
+        </a>
+        <h1>Mic FAisceaux</h1>
+    </div>
+
+    <main>
+        <div class="box">
+            <!-- Formulaire pour soumettre les données de l'utilisateur -->
+            <form action="/MICFSC" method="POST" id="submitForm">
+                <textarea name="text" id="myTextarea" class="customTextearea customTextarea" placeholder="SGTQS" maxlength="4" required=""></textarea><br>
+                <input type="submit" class="btn btn-primary" value="Exécuter">
+            </form>
+            
+            <form id="filterForm">
+                <label for="extremite_select">Filtrer par extrémité :</label>
+                <select name="extremite_select" id="extremite_select">
+                    <option value="" selected>Toutes les extrémités</option>
+                    {% for extremite in extremite_values %}
+                        <option value="{{ extremite }}">{{ extremite }}</option>
+                    {% endfor %}
+                </select>
+                <input type="button" class="btn btn-primary" value="Filtrer" id="filterButton"> 
+            </form>
+
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const filterForm = document.getElementById('filterForm');
+                const extremiteSelect = document.getElementById('extremite_select');
+                const submitForm = document.getElementById('submitForm');              
+                const entries = document.querySelectorAll('.entry-row');
+                const bloablodHeader = document.querySelector('th[data-column="bloablod"]');
+                const qmcilHeader = document.querySelector('th[data-column="qmcil"]');
+                let isSlashAdded = false;
+                let isEdAdded = false;
+
+                // Fonction pour extraire les valeurs uniques des extrémités
+                function getUniqueExtremiteValues() {
+                    const uniqueExtremiteValues = new Set();
+                    entries.forEach(entry => {
+                        const extremite = entry.querySelector('td[data-column="extremite"]').innerText;
+                        uniqueExtremiteValues.add(extremite);
+                    });
+                    return Array.from(uniqueExtremiteValues);
+                }
+        
+                // Remplir le menu déroulant avec les valeurs uniques des extrémités
+                const extremiteValues = getUniqueExtremiteValues();
+                extremiteValues.forEach(extremite => {
+                    const option = document.createElement('option');
+                    option.value = extremite;
+                    option.text = extremite;
+                    extremiteSelect.add(option);
+                });
+
+                function updateQMCILValues() {
+                    entries.forEach(entry => {
+                        const entryQMCILElement = entry.querySelector('td[data-column="qmcil"]');
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+                
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryQMCILElement && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                
+                            // Calculer la valeur de QMCIL
+                            const qmcilValue = `QMCIL:AFLR=${entryAflr};`;
+                
+                            // Mettre à jour la valeur dans la colonne QMCIL
+                            entryQMCILElement.innerText = qmcilValue;
+                        }
+                    });
+                }
+
+                function updateQmcmoIValues() {
+                    entries.forEach(entry => {
+                        const entryQmcmoIElement = entry.querySelector('td[data-column="qmcmo"]');
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+                
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryQmcmoIElement && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                
+                            // Calculer la valeur de QmcmoI
+                            const qmcmoIValue = `QMCMO:AFLR=${entryAflr},CRC=ACT;`;
+                
+                            // Mettre à jour la valeur dans la colonne QmcmoI
+                            entryQmcmoIElement.innerText = qmcmoIValue;
+                        }
+                    });
+                }
+
+                function watchbloablod() {
+                    entries.forEach(entry => {
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+                        const entryBloablod = entry.querySelector('td[data-column="bloablod"]');
+            
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryBloablod && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                
+                            // Calculer la valeur de QMCIL
+                            const bloablodValue = `CTMO:AFLR=${entryAflr}-1<31,ETAT=BLOA+BLOD;`;
+                
+                            // Mettre à jour la valeur dans la colonne QMCIL
+                            entryBloablod.innerText = bloablodValue;   
+                        }
+                    });
+                }
+        
+                // Fonction pour appliquer le filtre
+                function applyFilter() {
+                    const extremiteFilter = extremiteSelect.value.toUpperCase();
+        
+                    // Afficher ou masquer les entrées en fonction des filtres
+                    entries.forEach(entry => {
+                        const entryExtremiteElement = entry.querySelector('td[data-column="extremite"]');
+        
+                        // Vérifier si l'élément existe avant d'accéder à 'innerText'
+                        if (entryExtremiteElement) {
+                            const entryExtremite = entryExtremiteElement.innerText.toUpperCase();
+        
+                            const extremiteMatch = extremiteFilter === '' || entryExtremite === extremiteFilter;
+        
+                            if (extremiteMatch) {
+                                entry.style.display = 'table-row';
+                            } else {
+                                entry.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+
+                // Fonction pour copier le contenu d'une cellule dans le presse-papiers
+                function copyToClipboard(cellContent) {
+                    const dummyTextarea = document.createElement('textarea');
+                    dummyTextarea.value = cellContent;
+                    document.body.appendChild(dummyTextarea);
+                    dummyTextarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummyTextarea);
+                }
+
+                // Appeler la fonction pour mettre à jour les valeurs QMCIL et QmcmoI
+                updateQMCILValues();
+                updateQmcmoIValues();
+
+                // Appeler la fonction au chargement de la page
+                watchbloablod();
+        
+                // Ajouter un gestionnaire d'événements pour le formulaire de filtrage
+                filterForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    applyFilter();
+                });
+        
+                // Ajouter un gestionnaire d'événements pour le bouton de filtrage
+                const filterButton = document.getElementById('filterButton');
+                filterButton.addEventListener('click', function () {
+                    applyFilter();
+                });
+        
+                // Ajouter un gestionnaire d'événements pour le formulaire de soumission
+                submitForm.addEventListener('submit', function (event) {
+                    // Ajoutez ici le code pour gérer la soumission des données de l'utilisateur si nécessaire
+                });
+
+                // Ajoutez un gestionnaire d'événements pour chaque cellule que vous souhaitez rendre copiable
+                entries.forEach(entry => {
+                    const cellsToCopy = entry.querySelectorAll('td[data-copyable="true"]');
+                    cellsToCopy.forEach(cell => {
+                        cell.addEventListener('click', function () {
+                            copyToClipboard(cell.innerText);
+                        });
+                    });
+                });
+
+                bloablodHeader.addEventListener('click', function () {
+                    // Modifier le titre de la colonne
+                    isSlashAdded = !isSlashAdded;
+                    bloablodHeader.innerText = isSlashAdded ? '/BLOA+BLOD' : 'BLOA+BLOD';
+            
+                    // Mettre à jour le contenu des cellules
+                    entries.forEach(entry => {
+                        const entryBloablodElement = entry.querySelector('td[data-column="bloablod"]');
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+            
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryBloablodElement && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                            const bloablodValue = `CTMO:AFLR=${entryAflr}-1<31,ETAT=${isSlashAdded ? '/BLOA+BLOD' : 'BLOA+BLOD'};`;
+                            entryBloablodElement.innerText = bloablodValue;
+                        }
+                    });
+                });
+
+                qmcilHeader.addEventListener('click', function () {
+                    // Modifier le titre de la colonne
+                    isEdAdded = !isEdAdded;
+                    qmcilHeader.innerText = isEdAdded ? 'QMCIL,ED=OUI' : 'QMCIL';
+            
+                    // Mettre à jour le contenu des cellules
+                    entries.forEach(entry => {
+                        const entryQMCILElement = entry.querySelector('td[data-column="qmcil"]');
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+            
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryQMCILElement && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                            const qmcilValue = `QMCIL:AFLR=${entryAflr}${isEdAdded ? ',ED=OUI' : ''};`;
+                            entryQMCILElement.innerText = qmcilValue;
+                        }
+                    });
+                });
+                
+                // Ajouter un gestionnaire d'événements pour chaque cellule de la colonne "cirdem"
+                const cirdemCells = document.querySelectorAll('td[data-column="cirdem"]');
+                cirdemCells.forEach(cell => {
+                    cell.addEventListener('click', function () {
+                        // Récupérer la valeur actuelle de la cellule
+                        const currentCirdemValue = cell.innerText.trim().toLowerCase();
+            
+                        // Modifier la valeur en fonction de votre nouvelle logique
+                        let newCirdemValue;
+                        if (currentCirdemValue === 'oui') {
+                            const entryAflrElement = cell.parentElement.querySelector('td[data-column="aflr"]');
+                            const entryAflr = entryAflrElement ? entryAflrElement.innerText.trim() : '';
+            
+                            // Nouvelle logique pour la valeur de "cirdem" lorsqu'elle est "oui"
+                            newCirdemValue = `CIRDEM:AFCT=${entryAflr}-1<31;`;
+            
+                        } else {
+                            // Vous pouvez définir une logique différente ici si nécessaire
+                            newCirdemValue = 'Nouvelle valeur lorsque "cirdem" est autre que "oui"';
+                        }
+            
+                        // Copier la nouvelle valeur dans le presse-papiers
+                        copyToClipboard(newCirdemValue);
+                    });
+                });
+            });
+        </script>
+        
+        
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% else %}
+            {% if matching_entries %}
+                <table class='select'>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-column="extremite">Extrémité</th>
+                            <th class="sortable" data-column="aflr">AFLR</th>
+                            <th class="sortable" data-column="cirdem">CIRDEM</th>
+                            <th class="sortable" data-column="qmcil">QMCIL</th> 
+                            <th class="sortable" data-column="qmcmo">QMCMO_ACT</th>
+                            <th class="sortable" data-column="bloablod">BLOA+BLOD</th>
+                        </tr>
+                    </thead>                
+                    <tbody>
+                        {% for entry in matching_entries %}
+                        <tr class="entry-row">
+                            <td class ="zoom2able" data-column="extremite" data-copyable="true">{{ entry.get('extremite', '') }}</td>
+                            <td class ="zoom2able" data-column="aflr" data-copyable="true">{{ entry.get('aflr', '') }}</td>
+                            <td class ="zoom2able" data-column="cirdem">{{ entry.get('cirdem', '') }}</td>
+                            <td class ="zoom2able" data-column="qmcil" data-copyable="true"></td>
+                            <td class ="zoom2able" data-column="qmcmo" data-copyable="true"></td>
+                            <td class ="zoom2able" data-column="bloablod" data-copyable="true"></td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endif %}
+    </main>
+</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cellsToZoom = document.querySelectorAll('.select td');
+        
+            // Ajouter un gestionnaire d'événements pour le survol
+            cellsToZoom.forEach(cell => {
+                cell.addEventListener('mouseover', function () {
+                    cell.classList.add('zoomable');
+                });
+        
+                cell.addEventListener('mouseout', function () {
+                    cell.classList.remove('zoomable');
+                });
+        
+                // Ajouter un gestionnaire d'événements pour le clic
+                cell.addEventListener('click', function () {
+                    // Ajoutez ici le code à exécuter lorsqu'une cellule est cliquée
+                    console.log('Cell clicked:', cell.innerText);
+                });
+            });
+        });
+        
+    </script>
+</html>
