@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_from_directory , url_for 
 from collections import defaultdict
 import re
+
 import json
 from bs4 import BeautifulSoup
 
@@ -26,6 +27,9 @@ with open('templates/data/urail.json','r', encoding='utf-8') as urail_file:
 
 with open('templates/data/urail_cse.json','r', encoding='utf-8') as urail_cse_file:
     urail_cse = json.load(urail_cse_file)
+    
+with open('templates/data/30N.json','r', encoding='utf-8') as ressource_file:
+    data_30N = json.load(ressource_file)
     
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['JSON_AS_ASCII'] = False
@@ -862,24 +866,68 @@ def executer_programme_MICFSC():
     # Convertir le code SGTQS en majuscules
     sgtqs_input_upper = sgtqs_input.upper()
 
-    # Charger les données depuis le fichier JSON
-    with open('templates/data/Micfaisceaux.json', 'r', encoding='utf-8') as MIC_fsc_file:
-        mic_fsc = json.load(MIC_fsc_file)
+    # Charger les données depuis le fichier JSON Micfaisceaux
+    with open('templates/data/Micfaisceaux.json', 'r', encoding='utf-8') as mic_fsc_file:
+        mic_fsc = json.load(mic_fsc_file)
 
-    # Vérifier si le code SGTQS est présent dans le JSON
+    # Charger les données depuis le fichier JSON 30N
+    with open('templates/data/30N.json', 'r', encoding='utf-8') as ressource_file:
+        data_30N = json.load(ressource_file)
+
+    # Vérifier si le code SGTQS est présent dans le JSON Micfaisceaux
     if any(sgtqs_input_upper in entry for entry in mic_fsc):
-        # Rechercher les correspondances pour SGTQS
+        # Rechercher les correspondances pour SGTQS dans Micfaisceaux
         matching_entries = [entry[sgtqs_input_upper] for entry in mic_fsc if sgtqs_input_upper in entry]
+
+        for entry in matching_entries:
+            aflr_value = entry.get('aflr', '')
+
+            # Filtrer les éléments de 30N.json en fonction de la clé sgtqs_input_upper
+            if sgtqs_input_upper in data_30N:
+                matching_30n_list = [item for item in data_30N[sgtqs_input_upper] if "aflr" in item and item["aflr"] == aflr_value]
+
+                # Si des correspondances sont trouvées, ajouter le support à l'entrée de Micfaisceaux
+                for matching_30n_item in matching_30n_list:
+                    entry['support'] = matching_30n_item.get('support', '')
+
 
         # Trier les entrées par ordre alphabétique en fonction de "Extremite"
         matching_entries = sorted(matching_entries, key=lambda x: x.get('extremite', '').lower())
-
+        
         # Renvoyer les résultats triés à la page HTML
         return render_template('MICFSC.html', matching_entries=matching_entries, sgtqs_input=sgtqs_input_upper)
     else:
         # Renvoyer un message d'erreur à la page HTML
         return render_template('MICFSC.html', error_message="Code SGTQS non trouvé. Veuillez réessayer.", sgtqs_input=sgtqs_input_upper)
+    
+@app.route('/miseajour', methods=['GET'])
+def mise_a_jour():
+    # Récupérer la valeur de SGTQS depuis la requête GET
+    sgtqs_input = request.args.get('SGTQSinput', '').upper()
+
+    # Construire l'URL avec la valeur de SGTQS
+    url = f"http://aidepil-e10b3.si.francetelecom.fr/ocb283/sites_fichiers_NMC2/fsc/fscaa{sgtqs_input}.txt"
+
+    try:
+        # Effectuer la requête HTTP
+        response = requests.get(url)
+        response.raise_for_status()  # Vérifier si la requête a réussi (statut 200)
+
+        # Récupérer le contenu du fichier texte
+        scraping_result = response.text
+
+        # Imprimer le résultat dans la console du serveur
+        print(scraping_result)
+
+        # Renvoyer une réponse à la page HTML
+        return "Mise à jour effectuée avec succès."
+    except requests.exceptions.RequestException as e:
+        # Gérer les erreurs liées à la requête HTTP (par exemple, connexion refusée, page non trouvée, etc.)
+        print(f"Erreur lors de la requête HTTP : {e}")
+        return "Erreur lors de la mise à jour. Veuillez réessayer."
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+

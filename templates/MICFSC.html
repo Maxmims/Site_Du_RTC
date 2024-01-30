@@ -8,35 +8,37 @@
         /* Largeur des colonnes */
         th:first-child,
         td:first-child {
-            width: 10%; 
+            width: 8%; 
         }
         
         th:nth-child(2),
         td:nth-child(2) {
-            width: 10%; 
+            width: 8%; 
         }
 
         th:nth-child(3),
         td:nth-child(3){
-            width: 10%; 
+            width: 8%; 
         }
         
         th:nth-child(4),
         td:nth-child(4) {
-            width: 15%; 
+            width: 12%; 
         }
         th:nth-child(5),
         td:nth-child(5) {
-            width: 25%; 
+            width: 17%; 
         }
         th:nth-child(6),
         td:nth-child(6) {
-            width: 15%; 
+            width: 23%; 
         }
+        
         th:nth-child(7),
         td:nth-child(7) {
-            width: 15%; 
+            width: 25%; 
         }
+        
 
     </style>
     <title>Mic FAisceaux</title> 
@@ -49,7 +51,7 @@
         <h1>Mic FAisceaux</h1>
     </div>
 
-    <main>
+    <main class="no-transform">
         <div class="box">
             <!-- Formulaire pour soumettre les données de l'utilisateur -->
             <form action="/MICFSC" method="POST" id="submitForm">
@@ -57,17 +59,6 @@
                 <input type="submit" class="btn btn-primary" value="Exécuter">
             </form>
             
-            <form id="filterForm">
-                <label for="extremite_select">Filtrer par extrémité :</label>
-                <select name="extremite_select" id="extremite_select">
-                    <option value="" selected>Toutes les extrémités</option>
-                    {% for extremite in extremite_values %}
-                        <option value="{{ extremite }}">{{ extremite }}</option>
-                    {% endfor %}
-                </select>
-                <input type="button" class="btn btn-primary" value="Filtrer" id="filterButton"> 
-            </form>
-
         </div>
         
         <script>
@@ -77,10 +68,21 @@
                 const submitForm = document.getElementById('submitForm');              
                 const entries = document.querySelectorAll('.entry-row');
                 const bloablodHeader = document.querySelector('th[data-column="bloablod"]');
+                const qmcmoHeader = document.querySelector('th[data-column="qmcmo_act"]');
                 const qmcilHeader = document.querySelector('th[data-column="qmcil"]');
+                const copyQMCILButton = document.getElementById('copyQMCILButton');
+                const copyBloaBlodButton = document.getElementById('copyBloaBlodButton');
+                const copyQmcmoButton = document.getElementById('copyQmcmoButton');
+                const copyCirdemButton = document.getElementById('copyCirdemButton');
+                const miseAJourButton = document.getElementById('miseAJourButton');
+
+                
                 let isSlashAdded = false;
                 let isEdAdded = false;
+                let isAddACT = false;
 
+
+                
                 // Fonction pour extraire les valeurs uniques des extrémités
                 function getUniqueExtremiteValues() {
                     const uniqueExtremiteValues = new Set();
@@ -118,6 +120,19 @@
                     });
                 }
 
+                // Fonction pour afficher la confirmation de copie
+                function showCopyConfirmation() {
+                    const confirmationElement = document.createElement('div');
+                    confirmationElement.className = 'copy-confirmation';
+                    confirmationElement.innerText = 'Copié !';
+                    document.body.appendChild(confirmationElement);
+
+                    // Supprimer l'élément de confirmation après l'animation
+                    setTimeout(() => {
+                        document.body.removeChild(confirmationElement);
+                    }, 3000);
+                }
+
                 function updateQmcmoIValues() {
                     entries.forEach(entry => {
                         const entryQmcmoIElement = entry.querySelector('td[data-column="qmcmo"]');
@@ -128,7 +143,7 @@
                             const entryAflr = entryAflrElement.innerText.trim();
                 
                             // Calculer la valeur de QmcmoI
-                            const qmcmoIValue = `QMCMO:AFLR=${entryAflr},CRC=ACT;`;
+                            const qmcmoIValue = `QMCMO:AFCT=${entryAflr},CRC=ACT;`;
                 
                             // Mettre à jour la valeur dans la colonne QmcmoI
                             entryQmcmoIElement.innerText = qmcmoIValue;
@@ -146,7 +161,7 @@
                             const entryAflr = entryAflrElement.innerText.trim();
                 
                             // Calculer la valeur de QMCIL
-                            const bloablodValue = `CTMO:AFLR=${entryAflr}-1<31,ETAT=BLOA+BLOD;`;
+                            const bloablodValue = `CTMO:AFCT=${entryAflr}-1<31,ETAT=BLOA+BLOD;`;
                 
                             // Mettre à jour la valeur dans la colonne QMCIL
                             entryBloablod.innerText = bloablodValue;   
@@ -185,10 +200,14 @@
                     dummyTextarea.select();
                     document.execCommand('copy');
                     document.body.removeChild(dummyTextarea);
+
+                    // Afficher la confirmation de copie
+                    showCopyConfirmation();
                 }
 
                 // Appeler la fonction pour mettre à jour les valeurs QMCIL et QmcmoI
                 updateQMCILValues();
+
                 updateQmcmoIValues();
 
                 // Appeler la fonction au chargement de la page
@@ -234,7 +253,7 @@
                         // Vérifier si les éléments existent avant d'accéder à 'innerText'
                         if (entryBloablodElement && entryAflrElement) {
                             const entryAflr = entryAflrElement.innerText.trim();
-                            const bloablodValue = `CTMO:AFLR=${entryAflr}-1<31,ETAT=${isSlashAdded ? '/BLOA+BLOD' : 'BLOA+BLOD'};`;
+                            const bloablodValue = `CTMO:AFCT=${entryAflr}-1<31,ETAT=${isSlashAdded ? '/BLOA+BLOD' : 'BLOA+BLOD'};`;
                             entryBloablodElement.innerText = bloablodValue;
                         }
                     });
@@ -255,6 +274,27 @@
                             const entryAflr = entryAflrElement.innerText.trim();
                             const qmcilValue = `QMCIL:AFLR=${entryAflr}${isEdAdded ? ',ED=OUI' : ''};`;
                             entryQMCILElement.innerText = qmcilValue;
+                        }
+                    });
+                });
+
+                // Ajouter un gestionnaire d'événements pour la colonne "qmcmo"
+                
+                qmcmoHeader.addEventListener('click', function () {
+                    // Modifier le titre de la colonne
+                    isAddACT = !isAddACT;
+                    qmcmoHeader.innerText = isAddACT ? 'QMCMO_ACT' : 'QMCMO_NACT';
+            
+                    // Mettre à jour le contenu des cellules
+                    entries.forEach(entry => {
+                        const entryQmcmoElement = entry.querySelector('td[data-column="qmcmo"]');
+                        const entryAflrElement = entry.querySelector('td[data-column="aflr"]');
+            
+                        // Vérifier si les éléments existent avant d'accéder à 'innerText'
+                        if (entryQmcmoElement && entryAflrElement) {
+                            const entryAflr = entryAflrElement.innerText.trim();
+                            const qmcmoValue = `QMCMO:AFCT=${entryAflr}${isAddACT ? ',CRC=ACT' : ',CRC=NACT'};`;
+                            entryQmcmoElement.innerText = qmcmoValue;
                         }
                     });
                 });
@@ -284,6 +324,115 @@
                         copyToClipboard(newCirdemValue);
                     });
                 });
+
+                // Fonction pour copier le contenu des colonnes "30N" et "AFLR"
+                function copy30NToClipboard() {
+                    const thirtyNCells = document.querySelectorAll('td[data-column="30n"]');
+                    let thirtyNContent = '';
+
+                    // Parcourir les cellules de la colonne "30N"
+                    thirtyNCells.forEach(cell => {
+                        // Vérifier si la ligne parente est visible (après l'application du filtre)
+                        if (cell.parentElement.style.display !== 'none') {
+                            const entryAflrElement = cell.parentElement.querySelector('td[data-column="aflr"]');
+                            const entryAflr = entryAflrElement ? entryAflrElement.innerText.trim() : '';
+                            thirtyNContent += `${cell.innerText} - AFLR: ${entryAflr}\n`;
+                        }
+                    });
+
+                    // Copier le contenu dans le presse-papiers
+                    copyToClipboard(thirtyNContent.trim());
+                }
+
+                // Ajouter un gestionnaire d'événements pour le clic sur le bouton Copier QMCIL
+                copyQMCILButton.addEventListener('click', function () {
+                    copyColumnToClipboard('qmcil');
+                });
+
+                // Ajouter un gestionnaire d'événements pour le clic sur le bouton Copier BLOA+BLOD
+                copyBloaBlodButton.addEventListener('click', function () {
+                    copyColumnToClipboard('bloablod');
+                });
+
+                // Ajouter un gestionnaire d'événements pour le clic sur le bouton Copier QMCMO
+                copyQmcmoButton.addEventListener('click', function () {
+                    copyColumnToClipboard('qmcmo');
+                });
+
+                // Ajouter un gestionnaire d'événements pour le clic sur le bouton Copier 30N
+                const copy30NButton = document.getElementById('copy30NButton');
+                copy30NButton.addEventListener('click', function () {
+                    copyColumnToClipboard('30n_and_aflr');
+                });
+
+
+                // Fonction générique pour copier le contenu d'une colonne spécifiée
+                function copyColumnToClipboard(columnName) {
+                    if (columnName === '30n_and_aflr') {
+                        copy30NToClipboard();
+                        return;
+                    }
+
+                    const columnCells = document.querySelectorAll(`td[data-column="${columnName}"]`);
+                    let columnContent = '';
+
+                    // Parcourir les cellules de la colonne spécifiée
+                    columnCells.forEach(cell => {
+                        // Vérifier si la ligne parente est visible (après l'application du filtre)
+                        if (cell.parentElement.style.display !== 'none') {
+                            columnContent += cell.innerText + '\n';
+                        }
+                    });
+
+                    // Copier le contenu de la colonne dans le presse-papiers
+                    copyToClipboard(columnContent.trim());
+                }
+
+                // Ajouter un gestionnaire d'événements pour le clic sur le bouton "Mise à jour"
+                miseAJourButton.addEventListener('click', function () {
+                    // Faites une requête GET vers la route '/miseajour' pour déclencher la mise à jour
+                    fetch('/miseajour', { method: 'GET' })
+                        .then(response => response.text())
+                        .then(responseText => {
+                            // Affichez la réponse dans la console du navigateur (vous pouvez ajuster cela)
+                            console.log(responseText);
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la mise à jour :', error);
+                        });
+                });
+
+
+                function copyCirdemToClipboard() {
+                    const cirdemCells = document.querySelectorAll('td[data-column="cirdem"]');
+                    let cirdemContent = '';
+                
+                    // Parcourir les cellules de la colonne CIRDEM
+                    cirdemCells.forEach(cell => {
+                        // Vérifier si la ligne parente est visible (après l'application du filtre)
+                        if (cell.parentElement.style.display !== 'none') {
+                            const currentCirdemValue = cell.innerText.trim().toLowerCase();
+                
+                            // Ajouter uniquement les cellules avec la valeur "oui"
+                            if (currentCirdemValue === 'oui') {
+                                const entryAflrElement = cell.parentElement.querySelector('td[data-column="aflr"]');
+                                const entryAflr = entryAflrElement ? entryAflrElement.innerText.trim() : '';
+                                cirdemContent += `CIRDEM:AFCT=${entryAflr}-1<31;\n`;
+                            }
+                        }
+                    });
+                
+                    // Copier le contenu de la colonne CIRDEM dans le presse-papiers
+                    copyToClipboard(cirdemContent.trim());
+                }
+
+                
+                copyCirdemButton.addEventListener('click', function () {
+                    copyCirdemToClipboard();
+                });
+
+
+                
             });
         </script>
         
@@ -299,8 +448,9 @@
                             <th class="sortable" data-column="aflr">AFLR</th>
                             <th class="sortable" data-column="cirdem">CIRDEM</th>
                             <th class="sortable" data-column="qmcil">QMCIL</th> 
-                            <th class="sortable" data-column="qmcmo">QMCMO_ACT</th>
+                            <th class="sortable" data-column="qmcmo_act">QMCMO_ACT</th>
                             <th class="sortable" data-column="bloablod">BLOA+BLOD</th>
+                            <th class="sortable" data-column="30n">30N</th>
                         </tr>
                     </thead>                
                     <tbody>
@@ -312,11 +462,35 @@
                             <td class ="zoom2able" data-column="qmcil" data-copyable="true"></td>
                             <td class ="zoom2able" data-column="qmcmo" data-copyable="true"></td>
                             <td class ="zoom2able" data-column="bloablod" data-copyable="true"></td>
+                            <td class="zoom2able" data-column="30n" data-copyable="true">{{ entry.get('support', '') }}</td>
+
                         </tr>
 
                     {% endfor %}
+
+                    <form id="filterForm">
+                        <label class="labelselect" for="extremite_select">Filtrer par extrémité :</label>
+                        <select class="selectmapolice"name="extremite_select" id="extremite_select">
+                            <option value="" selected>Toutes les extrémités</option>
+                            {% for extremite in extremite_values %}
+                                <option value="{{ extremite }}">{{ extremite }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="button" class="btn btn-primary" value="Filtrer" id="filterButton"> 
+                    </form>
+
                     </tbody>
                 </table>
+                <div class="box">
+                <button id="copyCirdemButton" class="btn btn-primary">Copier CIRDEM</button>
+                <button id="copyQMCILButton" class="btn btn-primary">Copier QMCIL</button>           
+                <button id="copyQmcmoButton" class="btn btn-primary">Copier QMCMO</button>
+                <button id="copyBloaBlodButton" class="btn btn-primary">Copier BLOA+BLOD</button>
+                <button id="copy30NButton" class="btn btn-primary">Copier 30N</button>
+                <button id="miseAJourButton" class="btn btn-primary">Mise à jour</button>
+
+                </div>
+
             {% endif %}
         {% endif %}
     </main>
@@ -345,3 +519,5 @@
         
     </script>
 </html>
+
+

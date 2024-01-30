@@ -96,6 +96,7 @@ main {
     transition: transform 0.3s ease-in-out;
 
 }
+
 .home {
     display: flex;
     flex-wrap: wrap;
@@ -106,6 +107,12 @@ main {
 main:hover {
     transform: scale(1.03);
 }
+
+/* Styles pour l'élément main avec la classe no-transform */
+main.no-transform:hover {
+    transform: none; /* Annule l'effet de transformation */
+}
+
 .box{
  border:none;
  display: flex ;
@@ -555,6 +562,8 @@ td {
     border-top: none !important;
 }
 
+
+
 td[data-tooltip]:hover:after {
     content: attr(data-tooltip);
     background-color: rgba(0, 0, 0, 0.7);
@@ -585,6 +594,44 @@ td[data-tooltip]:hover:after {
 .policeMEP {
     font-family: 'MaPolice-regular', sans-serif;
     font-size:1.2rem;
+}
+
+/* Animation pour indiquer que les données ont été copiées */
+@keyframes copyConfirmation {
+    0% { opacity: 1; transform: translateY(0); }
+    20% { opacity: 1; transform: translateY(-20px); }
+    80% { opacity: 1; transform: translateY(-20px); }
+    100% { opacity: 0; transform: translateY(-40px); }
+}
+
+.copy-confirmation {
+    display: inline-block;
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    animation: copyConfirmation 3s ease-out;
+    font-family: 'MaPolice-regular', sans-serif;
+}
+
+/* Style du label */
+.labelselect {
+    font-family: 'MaPolice-regular', sans-serif; /* Remplacez 'VotrePolice' par le nom de votre police */
+    font-size: 1.2rem; /* Ajustez la taille de la police selon vos préférences */
+    color: #413e3e; /* Couleur du texte */
+}
+
+/* Style de la barre de filtre select */
+.selectmapolice {
+    font-family: 'MaPolice-regular', sans-serif; /* Remplacez 'VotrePolice' par le nom de votre police */
+    font-size: 1.2rem; /* Ajustez la taille de la police selon vos préférences */
+    padding: 8px; /* Ajustez l'espacement interne selon vos préférences */
+    border: 1px solid #ddd; /* Couleur de la bordure */
+    border-radius: 10px; /* Coins arrondis */
 }
 
 /* Styles supplémentaires pour rendre les rectangles responsifs */
